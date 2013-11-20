@@ -1,4 +1,4 @@
-var data = require('../lib/data.js');
+var data = require('../lib/dataHandler.js');
 
 
 module.exports.updateData = function (req, res) {

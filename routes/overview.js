@@ -1,7 +1,6 @@
-module.exports = function (req, res) {
+module.exports = function (req, res, data) {
     var lang = req.params.lang || 'en';
     var humanize = require('humanize')
-    var data = require('../lib/data.js')
     
     var waitForAppData = (function waitForAppData() {
 
@@ -9,8 +8,8 @@ module.exports = function (req, res) {
             res.render('overview', {
                 title: lang + ' Overview'
                 , lang: lang
-                , data: data
                 , humanize: humanize
+                , dataHandler = GLOBAL.dataHandler
             });
         }
         else{
