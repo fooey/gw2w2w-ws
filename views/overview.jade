@@ -1,0 +1,35 @@
+extends layout
+
+block content
+
+    div(class="container")
+        div(class="row")
+            div(class="col-md-12")
+                h1(class='page-header')= title
+                p Welcome to #{title}
+
+    
+                table(class="table table-condensed table-hover", id="overview")
+                    -var matchNum = 0;
+                    each match, matchIndex in GLOBAL.GW2.matches
+                        -matchNum++;
+                        -var matchDetails = GLOBAL.GW2.matchDetails[match.wvw_match_id]
+                        each worldIdKey, worldIndex in ['red_world_id', 'blue_world_id', 'green_world_id']
+                            -var thisWorldId = match[worldIdKey]
+                            -var world = GLOBAL.GW2.worldNamesById[thisWorldId][lang];
+                            tr(class='group group' + (matchNum%2) + ' worldIndex' + worldIndex + ' match' + match.wvw_match_id, id='world' + thisWorldId)
+                                td
+                                    a(href=data.getWorldLink(lang,world))= world.name
+                                td(class='score')= humanize.numberFormat(matchDetails.scores[worldIndex], 0)
+
+        div(class="row")
+            div(class="col-md-12")
+                ul
+                    each world, worldIndex in GLOBAL.GW2.worldNames[lang]
+                        li
+                            a(href=data.getWorldLink(lang,world))= world.name
+   
+
+block scripts     
+        script.
+            $(function(){subscribeToUpdates('overview');});
