@@ -33,41 +33,17 @@ GLOBAL.GW2 = GLOBAL.GW2 || {
 
 
 var server = http.createServer(app);
-//server.listen(8080);
 
 server.listen(app.get('port'), function(){
     console.log("Express server listening on port " + app.get('port'));
 });
 
-/*
-var io = require('socket.io').listen(server, {
-    transports: ['websocket']
-    , 'log level': 3
-});
-
-io.sockets.on('connection', function (socket) {
-  //socket.emit('news', { hello: 'world' });
-  socket.on('my other event', function (data) {
-    console.log(data);
-  });
-  socket.on('error', function (data) {
-    console.log(data);
-  });
-});
-*/
 
 var WebSocketServer = require('ws').Server
 var wss = new WebSocketServer({server:  server});
-wss.channels = {'overview': []}
 var wssHandler = new require('./lib/socketHandler.js')(wss);
 
 
 
 var data = require('./lib/data.js');
 data.init(wssHandler).updateData();
-
-
-
-
-
-

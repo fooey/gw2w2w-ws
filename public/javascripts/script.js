@@ -1,17 +1,6 @@
 var subscribeToUpdates = function (channel) {
-    var wsHost = [
-        'ws://'
-        , window.location.hostname
-        , ':'
-        , window.location.port
-        //, '/ws'
-    ].join('');
-
-
-
+    var wsHost = ['ws://', window.location.hostname, ':', window.location.port].join('');
     var wsClient = new WebSocket(wsHost);
-
-    console.log('subscribeToUpdates', channel)
 
     wsClient.onopen = function () {
         wsClient.send(JSON.stringify({ event: 'subscribe', channel: channel }))
@@ -37,6 +26,7 @@ var subscribeToUpdates = function (channel) {
 
 function overviewEvents(message){
     if (message.event && message.event === 'updateScore') {
+		console.log('update match scores', message.matchId);
         var $matchRows = $('.match' + message.matchId);
 
         $matchRows.each(function (i) {
