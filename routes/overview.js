@@ -9,7 +9,7 @@ module.exports = function (req, res, data) {
                 title: lang + ' Overview'
                 , lang: lang
                 , humanize: humanize
-                , dataHandler = GLOBAL.dataHandler
+                , dataHandler: GLOBAL.dataHandler
             });
         }
         else{
