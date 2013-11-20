@@ -9,6 +9,8 @@ block content
                 p Welcome to #{title}
 
     
+        div(class="row")
+            div(class="col-md-12")
                 table(class="table table-condensed table-hover", id="overview")
                     -var matchNum = 0;
                     each match, matchIndex in GLOBAL.GW2.matches

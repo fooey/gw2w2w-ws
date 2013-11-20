@@ -1,7 +1,9 @@
-module.exports = function (req, res, data) {
+module.exports = function (req, res) {
     var lang = req.params.lang || 'en';
     var humanize = require('humanize')
     
+    console.log('Render view: overview')
+
     var waitForAppData = (function waitForAppData() {
 
         if (GLOBAL.GW2.ready) {
