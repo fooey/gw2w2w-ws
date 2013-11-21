@@ -1,6 +1,37 @@
 extends layout
 
 
+block content
+
+    div(class="container")
+        div(class="row")
+            div(class="col-md-12")
+                a(href="/")
+                    img(src="/images/logo-512x192.png", class='block-center', width="512", height="192")
+
+        br
+    
+        div(class="row")
+            div(class="col-md-6")
+                +writeMatchesTable(matches.US)
+            div(class="col-md-6")
+                +writeMatchesTable(matches.EU)
+
+        div(class="row")
+            div(class="col-md-6")
+                +writeWorlds(worlds.US)
+            div(class="col-md-6")
+                +writeWorlds(worlds.EU)
+   
+
+block scripts     
+        script.
+            $(function(){subscribeToUpdates('overview', Math.floor(Date.now() / 1000))})
+
+
+
+
+
 mixin writeMatchesTable(matches)
     table(class="table table-condensed table-hover overview")
         -var matchNum = 0;
@@ -23,30 +54,3 @@ mixin writeWorlds(worlds)
         each world, worldIndex in worlds
             li
                 a(href=world.link)= world.name
-
-
-block content
-
-    div(class="container")
-        div(class="row")
-            div(class="col-md-12")
-                h1(class='page-header')= title
-                p Welcome to #{title}
-
-    
-        div(class="row")
-            div(class="col-md-6")
-                +writeMatchesTable(matches.US)
-            div(class="col-md-6")
-                +writeMatchesTable(matches.EU)
-
-        div(class="row")
-            div(class="col-md-6")
-                +writeWorlds(worlds.US)
-            div(class="col-md-6")
-                +writeWorlds(worlds.EU)
-   
-
-block scripts     
-        script.
-            $(function(){subscribeToUpdates('overview')})

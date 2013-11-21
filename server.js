@@ -2,11 +2,11 @@
 var now = new Date('1900-01-01');
 GLOBAL.GW2 = GLOBAL.GW2 || {
     ready: false
+    , initTime: Date.now()
     , langs: ['en', 'es', 'de', 'fr']
     , worldNames: {}
     , worldNamesById: {}
-    , objectiveNames: {}
-    , objectiveNamesById: {}
+    , objectives: {}
     , matches: {}
     , matchDetails: {}
     , matchDetailsPREV: {}

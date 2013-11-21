@@ -1,15 +1,110 @@
 body{
 	font-family: menomonia;
-	font-size: 16px;
+	font-size: 14px;
 	margin-bottom: 80px;
 }
+
+
+.strong{font-weight: bold;}
+.text-center{text-align: center !important}
+.text-left{text-align: left !important}
+.text-right{text-align: right !important}
+.small {font-size: 85%; line-height: 140%;}
+.capitalize {text-transform: capitalize;}
+
+.block-center{display: block; margin-left: auto; margin-right: auto;}
+.block-left{display: block; margin-left: 0; margin-right: auto;}
+.block-right{display: block; margin-left: auto; margin-right: 0;}
+.nowrap{display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+
+
 
 .team.red, .team.red a{color: #900;}
 .team.blue, .team.blue a{color: #009;}
 .team.green, .team.green a{color: #090;}
 
-table.overview td{font-size: 11pt}
+table.overview td{}
 table.overview .group0{background-color: #eee}
 table.overview .score{text-align: right}
 
 table.overview .updated{font-weight:  bold;}
+
+
+
+li.objective span + span{
+	margin-left: .5em;
+}
+li.objective .timer{
+	float: right;
+	display: inline-block;
+	width: 40px;
+	border: 1px solid black;
+}
+
+
+
+
+/* default, neutral sprites */
+.sprite,
+.sprite.camp,
+.sprite.camp.neutral{
+	background-image: url(/images/sprite3-60x150.png);
+	background-repeat: no-repeat;
+	display: inline-block;
+	width: 15px;
+	height: 15px;
+	line-height: 20px;
+	
+	background-position: -45px -45px; //default
+}
+.sprite.castle,
+.sprite.castle.neutral			{ background-position: -45px 0; }
+.sprite.keep,
+.sprite.keep.neutral			{ background-position: -45px -15px; }
+.sprite.tower,
+.sprite.tower.neutral			{ background-position: -45px -30px; }
+.sprite.temple,
+.sprite.temple.neutral			{ background-position: -45px -60px; }
+.sprite.hollow,
+.sprite.hollow.neutral			{ background-position: -45px -75px; }
+.sprite.estate,
+.sprite.estate.neutral			{ background-position: -45px -90px; }
+.sprite.overlook,
+.sprite.overlook.neutral		{ background-position: -45px -105px; }
+.sprite.overlook,
+.sprite.ascent.neutral			{ background-position: -45px -120px; }
+
+.sprite.bloodlust				{ background-position: 0 -135px; }
+
+/* red sprites */
+.sprite.castle.red				{ background-position: 0 0; }
+.sprite.keep.red				{ background-position: 0 -15px; }
+.sprite.tower.red				{ background-position: 0 -30px; }
+.sprite.camp.red				{ background-position: 0 -45px; }
+.sprite.temple.red				{ background-position: 0 -60px; }
+.sprite.hollow.red				{ background-position: 0 -75px; }
+.sprite.estate.red				{ background-position: 0 -90px; }
+.sprite.overlook.red			{ background-position: 0 -90px; }
+.sprite.ascent.red				{ background-position: 0 -90px; }
+
+/* blue sprites */
+.sprite.castle.blue				{ background-position: -15px 0; }
+.sprite.keep.blue				{ background-position: -15px -15px; }
+.sprite.tower.blue				{ background-position: -15px -30px; }
+.sprite.camp.blue				{ background-position: -15px -45px; }
+.sprite.temple.blue				{ background-position: -15px -60px; }
+.sprite.hollow.blue				{ background-position: -15px -75px; }
+.sprite.estate.blue				{ background-position: -15px -90px; }
+.sprite.overlook.blue			{ background-position: -15px -105px; }
+.sprite.ascent.blue				{ background-position: -15px -120px; }
+
+/* green sprites */
+.sprite.castle.green			{ background-position: -30px 0; }
+.sprite.camp.green				{ background-position: -30px -45px; }
+.sprite.tower.green				{ background-position: -30px -30px; }
+.sprite.keep.green				{ background-position: -30px -15px; }
+.sprite.temple.blue				{ background-position: -30px -60px; }
+.sprite.hollow.blue				{ background-position: -30px -75px; }
+.sprite.estate.blue				{ background-position: -30px -90px; }
+.sprite.overlook.blue			{ background-position: -30px -105px; }
+.sprite.ascent.blue				{ background-position: -30px -120px; }

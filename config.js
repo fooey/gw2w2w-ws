@@ -9,7 +9,8 @@ module.exports = function (app, express) {
         app.set('port', process.env.PORT || 3000);
         app.set('views', __dirname + '/views');
         app.set('view engine', 'jade');
-        app.use(express.favicon());
+        app.set('view cache', false);
+        app.use(express.favicon(path.join(__dirname, 'public/images/gw2-dragon-32.png')));
         app.use(express.logger('dev'));
         app.use(express.bodyParser());
         app.use(express.methodOverride());

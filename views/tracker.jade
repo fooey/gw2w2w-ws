@@ -1,19 +1,48 @@
 extends layout
 
+
+
 block content
 
     div(class="container")
-        div(class="row")
-            div(class="col-md-12")
-                h1(class='page-header')= title
-                p Welcome to #{title}
+        //
+            div(class="row")
+                div(class="col-md-12")
+                    h1(class='page-header')= title
 
+        br
+        div(class="row totalScores")
+            each team, ixTeam in ['red','blue','green']
+                -var world = worlds[ixTeam]
+                div(class="col-md-4")
+                    div(class="well team " + team)
+                        h2(class="text-center")= world.name
+                        h3(class="score text-center")= humanize.numberFormat(matchDetails.scores[ixTeam], 0)
 
         div(class="row")
-            div(class="col-md-12")
-                h1 Tracker!
+            -var ixMap = 0;
+            each objectiveGroup, objectiveGroupName in objectiveGroups
+                div(class="col-md-3", title=objectiveGroupName)
+                    h5(class="text-center")= mapNames[ixMap++]
+                    each section, sectionName in objectiveGroup
+                        div(class=section.groupClass, title=sectionName)
+                            ul(class="list-unstyled")
+                                each objectiveId, ixObjective in section.objectives
+                                    -var matchObjective = matchObjectives[objectiveId];
+                                    -var objectiveOwner = matchObjective.owner.toLowerCase()
+                                    -var objectiveGuild = matchObjective.owner_guild
+                                    -var objective = objectives[objectiveId][lang];
+                                    -var liClass = ['objective', 'team', objectiveOwner, 'clearfix'].join(' ');
+                                    -var spriteClass = ['sprite', objective.type, objectiveOwner].join(' ');
+                                    li(class=liClass, id="objective-" + objectiveId, data-lastcaptured=objective.lastCaptured)
+                                        span(class=spriteClass)
+                                        span(class="name")= objectiveCommonNames[lang][objectiveId]
+                                        if objectiveGuild
+                                            span(class='guild-' + objectiveGuild)
+                                        span(class='timer') ??:??
+
    
 
 block scripts     
-        script.
-            $(function(){subscribeToUpdates('match#{match.wvw_match_id}');});
+    script.
+        $(function(){subscribeToUpdates('match#{match.wvw_match_id}', Math.floor(Date.now() / 1000));});
