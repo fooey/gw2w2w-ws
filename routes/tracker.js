@@ -7,10 +7,13 @@ module.exports = function (req, res) {
     console.log('Render view: tracker', lang, worldNameSlug)
     
     var world = GLOBAL.dataHandler.getWorldBySlug(lang, worldNameSlug);
-    console.log('world:', world)
+    //console.log('world:', world)
 
     var match = GLOBAL.dataHandler.getMatchByWorldId(world.id);
-    console.log('match:', match)
+    //console.log('match:', match)
+
+    var matchDetails = GLOBAL.dataHandler.getMatchDetails(match.wvw_match_id);
+    console.log('matchDetails:', matchDetails)
 
     
     var waitForAppData = (function waitForAppData() {
