@@ -1,4 +1,4 @@
-(function (name, context, definition) {  context[name] = definition();  if (typeof module !== "undefined" && module.exports) {    module.exports = context[name];  } else if (typeof define == "function" && define.amd) {    define(definition);  }})("Primus", this, function PRIMUS() {/*globals require, define */
+function (name, context, definition) {  context[name] = definition();  if (typeof module !== "undefined" && module.exports) {    module.exports = context[name];  } else if (typeof define == "function" && define.amd) {    define(definition);  }})("Primus", this, function PRIMUS() {/*globals require, define */
 'use strict';
 
 /**
