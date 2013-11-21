@@ -1,5 +1,30 @@
 extends layout
 
+
+mixin writeMatchesTable(matches)
+    table(class="table table-condensed table-hover overview")
+        -var matchNum = 0;
+        each match, matchIndex in matches
+            -matchNum++;
+            -var matchDetails = GLOBAL.GW2.matchDetails[match.wvw_match_id];
+            each worldIdKey, worldIndex in ['red_world_id', 'blue_world_id', 'green_world_id']
+                -var thisWorldId = match[worldIdKey]
+                -var world = dataHandler.getWorldById(lang, thisWorldId);
+                -var team = (worldIndex === 0) ? 'red' : ((worldIndex === 1) ? 'blue' : 'green');
+                -var trClass = ['group group' + (matchNum%2), 'match' + match.wvw_match_id].join(' ');
+                -var aClass = ['team ' + team].join(' ');
+                tr(class=trClass, id='world' + thisWorldId)
+                    td
+                        a(href=world.link, class=aClass)= world.name
+                    td(class='score')= humanize.numberFormat(matchDetails.scores[worldIndex], 0)
+
+mixin writeWorlds(worlds)
+    ul
+        each world, worldIndex in worlds
+            li
+                a(href=world.link)= world.name
+
+
 block content
 
     div(class="container")
@@ -10,28 +35,18 @@ block content
 
     
         div(class="row")
-            div(class="col-md-12")
-                table(class="table table-condensed table-hover", id="overview")
-                    -var matchNum = 0;
-                    each match, matchIndex in GLOBAL.GW2.matches
-                        -matchNum++;
-                        -var matchDetails = GLOBAL.GW2.matchDetails[match.wvw_match_id]
-                        each worldIdKey, worldIndex in ['red_world_id', 'blue_world_id', 'green_world_id']
-                            -var thisWorldId = match[worldIdKey]
-                            -var world = GLOBAL.GW2.worldNamesById[thisWorldId][lang];
-                            tr(class='group group' + (matchNum%2) + ' worldIndex' + worldIndex + ' match' + match.wvw_match_id, id='world' + thisWorldId)
-                                td
-                                    a(href=world.link)= world.name
-                                td(class='score')= humanize.numberFormat(matchDetails.scores[worldIndex], 0)
+            div(class="col-md-6")
+                +writeMatchesTable(matches.US)
+            div(class="col-md-6")
+                +writeMatchesTable(matches.EU)
 
         div(class="row")
-            div(class="col-md-12")
-                ul
-                    each world, worldIndex in GLOBAL.GW2.worldNames[lang]
-                        li
-                            a(href=world.link)= world.name
+            div(class="col-md-6")
+                +writeWorlds(worlds.US)
+            div(class="col-md-6")
+                +writeWorlds(worlds.EU)
    
 
 block scripts     
         script.
-            $(function(){subscribeToUpdates('overview');});
+            $(function(){subscribeToUpdates('overview')})

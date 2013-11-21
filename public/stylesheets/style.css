@@ -4,8 +4,12 @@ body{
 	margin-bottom: 80px;
 }
 
+.team.red, .team.red a{color: #900;}
+.team.blue, .team.blue a{color: #009;}
+.team.green, .team.green a{color: #090;}
 
-#overview .group0{background-color: #eee}
-#overview .score{text-align: right}
+table.overview td{font-size: 11pt}
+table.overview .group0{background-color: #eee}
+table.overview .score{text-align: right}
 
-#overview .updated{font-weight:  bold;}
+table.overview .updated{font-weight:  bold;}
