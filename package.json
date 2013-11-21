@@ -6,10 +6,11 @@
     "url": "git://github.com/fooey/gw2w2w-ws.git"
   },
   "dependencies": {
-    "jade": "*",
     "clean-css": "*",
     "deep-diff": "*",
+    "express": "*",
     "humanize": "*",
+    "jade": "*",
     "request": "*",
     "slug": "*",
     "underscore": "*",
