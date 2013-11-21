@@ -9,15 +9,20 @@ var subscribeToUpdates = function (channel) {
     wsClient.onmessage = function (event) {
 
         var message = event.data;
+
         if (isJSON(message)) {
             message = JSON.parse(message);
         }
-            
-        if (channel === 'overview') {
-            overviewEvents(message);
-        }
-        else{
-            trackerEvents(message);
+        
+        switch(channel){
+            case 'overview':
+                overviewEvents(message);
+                break;
+            case 'tracker':
+                trackerEvents(message);
+                break;
+            default:
+                console.log('Invalid Channel: ', channel)
         }
 
         //console.log('Recieved WS Message: ', message);
@@ -26,12 +31,13 @@ var subscribeToUpdates = function (channel) {
 
 function overviewEvents(message){
     if (message.event && message.event === 'updateScore') {
-		console.log('update match scores', message.matchId);
-        var $matchRows = $('.match' + message.matchId);
+        var eventArgs = message.arguments;
+		console.log('update match scores', eventArgs.matchId);
+        var $matchRows = $('.match' + eventArgs.matchId);
 
         $matchRows.each(function (i) {
             var $that = $(this);
-            var score = Humanize.intcomma(message.scores[i]);
+            var score = Humanize.intcomma(eventArgs.scores[i]);
             $that
                 .find('.score')
                 .fadeOut('fast', function(){
