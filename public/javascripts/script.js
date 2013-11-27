@@ -49,7 +49,7 @@ var subscribeToUpdates = function (channel) {
     };
     wsClient.onclose = function () {
         //if the server drops connection, reload the page in 3 seconds
-        setTimeout(window.location.reload(), (3*1000));
+        setTimeout(function(){window.location.reload()}, (5*1000));
     };
 
     wsClient.onmessage = function (event) {
@@ -64,6 +64,7 @@ var subscribeToUpdates = function (channel) {
         }
 
         _.each(packets, function(packet, index){
+            //console.log('WS Packet', packet)
             if (packet.event && packet.event == 'ping'){
                 var packet = {event: 'pong'};
                 console.log('WS Response: ', packet)
