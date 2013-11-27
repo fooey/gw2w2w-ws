@@ -64,7 +64,12 @@ var subscribeToUpdates = function (channel) {
         }
 
         _.each(packets, function(packet, index){
-            if(channel){
+            if (packet.event && packet.event == 'ping'){
+                var packet = {event: 'pong'};
+                console.log('WS Response: ', packet)
+                wsClient.send(JSON.stringify(packet));
+            }
+            else {
                 switch(channel){
                     case 'overview':
                         overviewEvents(packet);
@@ -73,9 +78,6 @@ var subscribeToUpdates = function (channel) {
                         trackerEvents(packet);
                         break;
                 }
-            }
-            else if (event === 'ping'){
-                wsClient.send(JSON.stringify({event: 'pong'}));
             }
         })
 

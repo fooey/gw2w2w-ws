@@ -1,11 +1,10 @@
 # this is my ignore file with a nice comment at the top
-
 #/vendor/*     # ignore all external submodules
 #./README.md   # a specific file
 #*.css         # ignore any CSS files too
 #:(\d)*\.js    # monitor javascript files with only digits in their name
 
-
 /public/*     	# static files
+/public/js/*    # static files
 /node_modules/* # dependencies
 /cache/* 		# data cache
