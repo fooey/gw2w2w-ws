@@ -38,7 +38,7 @@ var drawPie = function($pie){
 
 
 
-var subscribeToUpdates = function (channel, serverTime) {
+var subscribeToUpdates = function (channel) {
     var wsHost = ['ws://', window.location.hostname, ':', window.location.port].join('');
     var wsClient = new WebSocket(wsHost);
 
@@ -142,25 +142,22 @@ function trackerEvents(message){
 var buffTimer = 5*60;
 var updateTimers = (function updateTimers(){
     var now = Math.floor(Date.now() / 1000);
-    //console.log(now, serverTime);
 
-    if(serverTime){
-        $('.objective').each(function(i){
-            var $that = $(this);
-            var lastCaptured = $that.data('lastcaptured');
-            var timeHeld = now - lastCaptured;
+    $('.objective').each(function(i){
+        var $that = $(this);
+        var lastCaptured = $that.data('lastcaptured');
+        var timeHeld = now - lastCaptured;
 
-            if(timeHeld < buffTimer){
-                $that.find('.timer').html(minuteFormat(buffTimer - timeHeld))
-            }
-            else{
-                $that.find('.timer').text('')
-                //$that.find('.timer').html('<small>+' + timeHeld + '</small>')
-            }
+        if(timeHeld < buffTimer){
+            $that.find('.timer').html(minuteFormat(buffTimer - timeHeld))
+        }
+        else{
+            $that.find('.timer').text('')
+            //$that.find('.timer').html('<small>+' + timeHeld + '</small>')
+        }
 
-            //console.log(lastCaptured)
-        })
-    }
+        //console.log(lastCaptured)
+    })
 
     setTimeout(updateTimers, 1000);
 })();
