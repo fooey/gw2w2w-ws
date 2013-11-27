@@ -1,3 +1,42 @@
+$(function(){
+    "use strict"
+
+
+    var $overview = $('.overview');
+    if($overview.length){
+        $overview.find('.pie').each(function(){
+            drawPie($(this));
+        });
+    }
+})
+
+
+var drawPie = function($pie){
+    var $baseTR = $pie.closest('tr');
+    var redScore = $baseTR.find('.score').data('score') || 0;
+    var blueScore = $baseTR.next().find('.score').data('score') || 0;
+    var greenScore = $baseTR.next().next().find('.score').data('score') || 0;
+
+    var data = [{
+        value: redScore,
+        color:"#b94a48"
+    },{
+        value : blueScore,
+        color : "#3a87ad"
+    },{
+        value : greenScore,
+        color : "#468847"
+    }];
+
+    var ctx = $pie.find('canvas').get(0).getContext("2d");
+    var myNewChart = new Chart(ctx).Pie(data, {animation: false, });
+}
+
+
+
+
+
+
 var serverTimeOffset;
 
 var subscribeToUpdates = function (channel, serverTime) {
@@ -15,27 +54,33 @@ var subscribeToUpdates = function (channel, serverTime) {
     };
 
     wsClient.onmessage = function (event) {
+        var packets = event.data;
 
-        var message = event.data;
+        if (isJSON(packets)) {
+            packets = JSON.parse(packets);
+        }
 
-        if (isJSON(message)) {
-            message = JSON.parse(message);
+        if(!Array.isArray(packets)){
+            packets = [packets];
         }
-        
-        switch(channel){
-            case 'overview':
-                overviewEvents(message);
-                break;
-            default:
-                trackerEvents(message);
-                break;
-        }
+
+        _.each(packets, function(packet, index){            
+            switch(channel){
+                case 'overview':
+                    overviewEvents(packet);
+                    break;
+                default:
+                    trackerEvents(packet);
+                    break;
+            }
+        })
 
         //console.log('Recieved WS Message: ', message);
     };
 }
 
 function overviewEvents(message){
+
     if (message.event && message.event === 'updateScore') {
         var eventArgs = message.arguments;
 		console.log('update match scores', eventArgs.matchId);
@@ -46,11 +91,11 @@ function overviewEvents(message){
             var score = Humanize.intcomma(eventArgs.scores[i]);
             $that
                 .find('.score')
-                .fadeOut('fast', function(){
-                     $(this).text(score).fadeIn('fast');
-                })
+                    .text(score)
                
         });
+
+        drawPie($matchRows.find('.pie'));
     }
 }
 
@@ -65,9 +110,7 @@ function trackerEvents(message){
         $scores.each(function (i) {
             var score = Humanize.intcomma(eventArgs.scores[i]);
             $(this)
-                .fadeOut('fast', function(){
-                     $(this).text(score).fadeIn('fast');
-                })
+                .text(score)
                
         });
     }
@@ -92,19 +135,29 @@ function trackerEvents(message){
 
 
 
-var retributionTimer = 5*60;
+var buffTimer = 5*60;
 var updateTimers = (function updateTimers(){
     var now = Math.floor(Date.now() / 1000);
     var serverTime = now - serverTimeOffset;
     //console.log(now, serverTime);
 
-    $('.objective').each(function(i){
-        var $that = $(this);
-        var lastCaptured = $that.data('lastcaptured');
-        var timeHeld = serverTime - lastCaptured;
-        $that.find('.timer').html(timeHeld)
-        //console.log(lastCaptured)
-    })
+    if(serverTime){
+        $('.objective').each(function(i){
+            var $that = $(this);
+            var lastCaptured = $that.data('lastcaptured');
+            var timeHeld = serverTime - lastCaptured;
+
+            if(timeHeld < buffTimer){
+                $that.find('.timer').html(minuteFormat(buffTimer - timeHeld))
+            }
+            else{
+                $that.find('.timer').text('')
+                //$that.find('.timer').html('<small>+' + timeHeld + '</small>')
+            }
+
+            //console.log(lastCaptured)
+        })
+    }
 
     setTimeout(updateTimers, 1000);
 })();
@@ -119,4 +172,21 @@ function isJSON(data) {
        isJson = typeof json === 'object' ;
     } catch (ex) {}
     return isJson;
+}
+
+
+function minuteFormat(seconds){
+    var minutes = Math.floor(seconds / 60);
+    seconds -= (minutes * 60);
+    
+    if(seconds === 0){
+        seconds = '00';
+    }
+    else if(seconds < 10){
+        seconds = '0' + seconds;
+    }
+    
+    var txt = minutes + ':' +  seconds;
+    
+    return txt;
 }

@@ -18,16 +18,23 @@ body{
 .nowrap{display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
 
 
-
+/*
 .team.red, .team.red a{color: #900;}
 .team.blue, .team.blue a{color: #009;}
 .team.green, .team.green a{color: #090;}
+*/
+
+.team.red{color: #b94a48 !important}
+.team.blue{color: #3a87ad !important}
+.team.green{color: #468847 !important}
+.team.neutral{color: #999 !important; font-style: italic;}
+
 
 table.overview td{}
 table.overview .group0{background-color: #eee}
 table.overview .score{text-align: right}
 
-table.overview .updated{font-weight:  bold;}
+table.overview .pie{}
 
 
 
@@ -38,7 +45,17 @@ li.objective .timer{
 	float: right;
 	display: inline-block;
 	width: 40px;
-	border: 1px solid black;
+	//border: 1px solid black;
+	text-align: right;
+	font-family: monospace;
+	font-size: 12px;
+	line-height: 18px;
+	height: 18px;
+	padding: 0 2px;
+}
+li.objective .timer small{
+	font-size: 10px;
+	line-height: 18px;
 }
 
 
@@ -103,8 +120,8 @@ li.objective .timer{
 .sprite.camp.green				{ background-position: -30px -45px; }
 .sprite.tower.green				{ background-position: -30px -30px; }
 .sprite.keep.green				{ background-position: -30px -15px; }
-.sprite.temple.blue				{ background-position: -30px -60px; }
-.sprite.hollow.blue				{ background-position: -30px -75px; }
-.sprite.estate.blue				{ background-position: -30px -90px; }
-.sprite.overlook.blue			{ background-position: -30px -105px; }
-.sprite.ascent.blue				{ background-position: -30px -120px; }
+.sprite.temple.green				{ background-position: -30px -60px; }
+.sprite.hollow.green				{ background-position: -30px -75px; }
+.sprite.estate.green				{ background-position: -30px -90px; }
+.sprite.overlook.green			{ background-position: -30px -105px; }
+.sprite.ascent.green				{ background-position: -30px -120px; }

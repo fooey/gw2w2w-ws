@@ -13,14 +13,19 @@ block content
     
         div(class="row")
             div(class="col-md-6")
+                h2() US Matches
                 +writeMatchesTable(matches.US)
             div(class="col-md-6")
+                h2() EU Matches
                 +writeMatchesTable(matches.EU)
+
 
         div(class="row")
             div(class="col-md-6")
+                h3(class="page-header") US Worlds
                 +writeWorlds(worlds.US)
             div(class="col-md-6")
+                h3(class="page-header") EU Worlds
                 +writeWorlds(worlds.EU)
    
 
@@ -29,28 +34,28 @@ block scripts
             $(function(){subscribeToUpdates('overview', Math.floor(Date.now() / 1000))})
 
 
+mixin writeWorlds(worlds)
+    ul(class="nav nav-list")
+        each world, worldIndex in worlds
+            li
+                a(href=world.link)= world.name
 
 
 
 mixin writeMatchesTable(matches)
-    table(class="table table-condensed table-hover overview")
-        -var matchNum = 0;
-        each match, matchIndex in matches
-            -matchNum++;
-            -var matchDetails = GLOBAL.GW2.matchDetails[match.wvw_match_id];
-            each worldIdKey, worldIndex in ['red_world_id', 'blue_world_id', 'green_world_id']
-                -var thisWorldId = match[worldIdKey]
-                -var world = dataHandler.getWorldById(lang, thisWorldId);
-                -var team = (worldIndex === 0) ? 'red' : ((worldIndex === 1) ? 'blue' : 'green');
-                -var trClass = ['group group' + (matchNum%2), 'match' + match.wvw_match_id].join(' ');
-                -var aClass = ['team ' + team].join(' ');
-                tr(class=trClass, id='world' + thisWorldId)
-                    td
-                        a(href=world.link, class=aClass)= world.name
-                    td(class='score')= humanize.numberFormat(matchDetails.scores[worldIndex], 0)
-
-mixin writeWorlds(worlds)
-    ul
-        each world, worldIndex in worlds
-            li
-                a(href=world.link)= world.name
+        table(class="table table-condensed table-hover overview")
+            -var matchNum = 0;
+            each match, matchIndex in matches
+                -matchNum++;
+                each world, worldIndex in [match.getRedWorld(lang), match.getBlueWorld(lang), match.getGreenWorld(lang)]
+                    if(world)
+                        -var team = ['red', 'blue', 'green'][worldIndex];
+                        -var trClass = ['group group' + (matchNum%2), 'match' + match.id, 'team', team].join(' ');
+                        -var aClass = ['team', team].join(' ');
+                        tr(id='world' + world.id, class=trClass)
+                            td(width="100%")
+                                a(href=world.link, class=aClass)= world.name
+                            td(class='score', data-score=scores[match.id][worldIndex])= humanize.numberFormat(scores[match.id][worldIndex], 0)
+                            if(worldIndex === 0)
+                                td(class='pie', rowspan=3, align="center", valign="center")
+                                    canvas(width="72", height="72")

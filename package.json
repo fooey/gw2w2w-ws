@@ -6,11 +6,13 @@
     "url": "git://github.com/fooey/gw2w2w-ws.git"
   },
   "dependencies": {
+    "async": "0.2.x",
     "clean-css": "*",
     "deep-diff": "*",
-    "express": "*",
+    "express": "3.x",
     "humanize": "*",
     "jade": "*",
+    "pg":"2.x",
     "request": "*",
     "slug": "*",
     "underscore": "*",
