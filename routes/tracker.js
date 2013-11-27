@@ -48,6 +48,7 @@ module.exports = function (req, res) {
         , objectives: objectives
         , matchObjectives: matchObjectives
         , timestamp: myUtil.toUtcTimeStamp(Date.now())
+        , objectiveState: GLOBAL.data.objectiveState[match.id]
 
         /*
         , objectives: objectives

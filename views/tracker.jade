@@ -34,12 +34,12 @@ block content
                                     -var objectiveGuild = matchObjective.owner_guild
                                     -var liClass = ['objective', 'team', objectiveOwner, 'clearfix'].join(' ');
                                     -var spriteClass = ['sprite', objective.objectiveType.type, objectiveOwner].join(' ');
-                                    li(class=liClass, id="objective-" + objective.id, data-lastcaptured=Math.floor(Date.now() / 1000))
+                                    li(class=liClass, id="objective-" + objective.id, data-lastcaptured=objectiveState[objective.id].lastCaptured)
                                         span(class=spriteClass)
                                         span()= objective.getCommonName(lang)
                                         if objectiveGuild
                                             span(class='guild-' + objectiveGuild)
-                                        span(class='timer') ??:??
+                                        span(class='timer')= ''
 
    
 

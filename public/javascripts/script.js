@@ -1,3 +1,7 @@
+var startTime = Date.now();
+
+
+
 $(function(){
     "use strict"
 
