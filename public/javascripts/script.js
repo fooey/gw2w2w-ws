@@ -1,7 +1,3 @@
-var startTime = Date.now();
-
-
-
 $(function(){
     "use strict"
 
@@ -41,16 +37,15 @@ var drawPie = function($pie){
 
 
 
-var serverTimeOffset;
 
 var subscribeToUpdates = function (channel, serverTime) {
-    serverTimeOffset = serverTime - Math.floor(Date.now() / 1000);
-
     var wsHost = ['ws://', window.location.hostname, ':', window.location.port].join('');
     var wsClient = new WebSocket(wsHost);
 
     wsClient.onopen = function () {
-        wsClient.send(JSON.stringify({ event: 'subscribe', channel: channel }))
+        var packet = { event: 'subscribe', channel: channel };
+        console.log(packet);
+        wsClient.send(JSON.stringify(packet))
     };
     wsClient.onclose = function () {
         //if the server drops connection, reload the page in 3 seconds
@@ -68,14 +63,19 @@ var subscribeToUpdates = function (channel, serverTime) {
             packets = [packets];
         }
 
-        _.each(packets, function(packet, index){            
-            switch(channel){
-                case 'overview':
-                    overviewEvents(packet);
-                    break;
-                default:
-                    trackerEvents(packet);
-                    break;
+        _.each(packets, function(packet, index){
+            if(channel){
+                switch(channel){
+                    case 'overview':
+                        overviewEvents(packet);
+                        break;
+                    default:
+                        trackerEvents(packet);
+                        break;
+                }
+            }
+            else if (event === 'ping'){
+                wsClient.send(JSON.stringify({event: 'pong'}));
             }
         })
 
@@ -142,14 +142,13 @@ function trackerEvents(message){
 var buffTimer = 5*60;
 var updateTimers = (function updateTimers(){
     var now = Math.floor(Date.now() / 1000);
-    var serverTime = now - serverTimeOffset;
     //console.log(now, serverTime);
 
     if(serverTime){
         $('.objective').each(function(i){
             var $that = $(this);
             var lastCaptured = $that.data('lastcaptured');
-            var timeHeld = serverTime - lastCaptured;
+            var timeHeld = now - lastCaptured;
 
             if(timeHeld < buffTimer){
                 $that.find('.timer').html(minuteFormat(buffTimer - timeHeld))
