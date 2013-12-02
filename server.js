@@ -1,5 +1,6 @@
 var _ = require('underscore')
 
+require('newrelic'); // monitoring
 GLOBAL.appRoot = __dirname;
 
 
@@ -19,7 +20,6 @@ var routes = require('./routes')(app, express);
 
 var WebSocketServer = require('ws').Server
 var wss = new WebSocketServer({server:  server});
-
 
     
 GLOBAL.wssHandler = new require('./lib/socketHandler.js')(wss);
