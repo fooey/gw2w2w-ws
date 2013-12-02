@@ -1,6 +1,5 @@
 var _ = require('underscore')
 
-require('newrelic'); // monitoring
 GLOBAL.appRoot = __dirname;
 
 

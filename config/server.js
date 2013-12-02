@@ -17,6 +17,11 @@ module.exports = function (app, express) {
     });
 
 
+    app.configure('production', function () {
+        require('newrelic'); // monitoring
+    });
+
+
     app.configure('development', function () {
         app.use(express.errorHandler());
         app.locals.pretty = true;
