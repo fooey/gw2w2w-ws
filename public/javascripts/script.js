@@ -1,14 +1,40 @@
+
+/*
+*
+*   ONLOAD and BEHAVIORS
+*
+*/
+
+var $overview, $tracker;
+
 $(function(){
     "use strict"
 
 
-    var $overview = $('.overview');
+    $overview = $('.overview');
     if($overview.length){
         $overview.find('.pie').each(function(){
             drawPie($(this));
         });
     }
-})
+
+    
+    $tracker = $('#tracker');
+    if($tracker.length){
+        updateTimers()
+        setInterval(updateTimers, 1000);
+    }
+});
+
+
+
+
+
+/*
+*
+*   OVERVIEW
+*
+*/
 
 
 var drawPie = function($pie){
@@ -36,8 +62,43 @@ var drawPie = function($pie){
 
 
 
+/*
+*
+*   TRACKER
+*
+*/
+
+var buffTimer = 5*60;
+var updateTimers = function updateTimers(){
+    var now = Math.floor(Date.now() / 1000);
+
+    $tracker.find('.objective').each(function(i){
+        var $that = $(this);
+        var lastCaptured = $that.data('lastcaptured');
+        var timeHeld = now - lastCaptured;
+
+        if(timeHeld < buffTimer){
+            $that.find('.timer').html(minuteFormat(buffTimer - timeHeld))
+        }
+        else{
+            $that.find('.timer').text('')
+            //$that.find('.timer').html('<small>+' + timeHeld + '</small>')
+        }
+
+        //console.log(lastCaptured)
+    })
+};
 
 
+
+
+
+
+/*
+*
+*   WEB SOCKET EVENTS
+*
+*/
 var subscribeToUpdates = function (channel) {
     var wsHost = ['ws://', window.location.hostname, ':', window.location.port].join('');
     var wsClient = new WebSocket(wsHost);
@@ -85,6 +146,8 @@ var subscribeToUpdates = function (channel) {
         //console.log('Recieved WS Message: ', message);
     };
 }
+
+
 
 function overviewEvents(message){
 
@@ -142,30 +205,13 @@ function trackerEvents(message){
 
 
 
-var buffTimer = 5*60;
-var updateTimers = (function updateTimers(){
-    var now = Math.floor(Date.now() / 1000);
-
-    $('.objective').each(function(i){
-        var $that = $(this);
-        var lastCaptured = $that.data('lastcaptured');
-        var timeHeld = now - lastCaptured;
-
-        if(timeHeld < buffTimer){
-            $that.find('.timer').html(minuteFormat(buffTimer - timeHeld))
-        }
-        else{
-            $that.find('.timer').text('')
-            //$that.find('.timer').html('<small>+' + timeHeld + '</small>')
-        }
-
-        //console.log(lastCaptured)
-    })
-
-    setTimeout(updateTimers, 1000);
-})();
 
 
+/*
+*
+*   UTILITY
+*
+*/
 
 function isJSON(data) {
     var isJson = false
