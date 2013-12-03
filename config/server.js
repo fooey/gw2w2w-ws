@@ -18,7 +18,13 @@ module.exports = function (app, express) {
 
 
     app.configure('production', function () {
-        require('newrelic'); // monitoring
+        if(process.env.NODETIME_ACCOUNT_KEY) {
+            require('nodetime').profile({
+                accountKey: process.env.NODETIME_ACCOUNT_KEY,
+                appName: 'gw2w2w-ws' // optional
+            });
+        }
+
     });
 
 
