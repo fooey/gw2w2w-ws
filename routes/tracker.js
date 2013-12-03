@@ -1,12 +1,14 @@
 var humanize = require('humanize'),
-    _ = require('underscore'),
+    _ = require('lodash'),
     async = require('async'),
     path = require('path')
 
-var worldsController = require(path.join(GLOBAL.appRoot, '/lib/worlds.js')),
+var myUtil = require(path.join(GLOBAL.appRoot, '/lib/util.js')),
+    worldsController = require(path.join(GLOBAL.appRoot, '/lib/worlds.js')),
     matchesController = require(path.join(GLOBAL.appRoot, '/lib/matches.js')),
     objectivesController = require(path.join(GLOBAL.appRoot, '/lib/objectives.js')),
-    myUtil = require(path.join(GLOBAL.appRoot, '/lib/util.js'))
+    anet = require(path.join(GLOBAL.appRoot, '/lib/anet.js'))
+    
 
 
 module.exports = function (req, res) {
@@ -19,7 +21,7 @@ module.exports = function (req, res) {
 
 
     var mapNames = ['Eternal Battlegrounds'];
-    _.each([match.getRedWorld(lang), match.getBlueWorld(lang), match.getGreenWorld(lang)], function(world, i){
+    _.forEach([match.getRedWorld(lang), match.getBlueWorld(lang), match.getGreenWorld(lang)], function(world, i){
         mapNames.push(world.name + ' Borderland');
     })
 
@@ -29,26 +31,31 @@ module.exports = function (req, res) {
 
 
     var matchObjectives = {};
-    _.each(_.flatten(_.pluck(matchDetails.maps, 'objectives')), function(matchObjective, ix){
+    var _objectives = _.flatten(matchDetails.maps, 'objectives');
+    _.forEach(_objectives, function(matchObjective, ix){
         matchObjectives[matchObjective.id] = matchObjective;
     });
 
 
 
     res.render('tracker', {
-        title: world.name + ' WvW Objectives Tracker'
-        , humanize: humanize
-        , lang: lang
-        , match: match
-        , world: world
-        , scores: scores
+        title: world.name + ' WvW Objectives Tracker',
+        langs: anet.langs,
+        humanize: humanize,
 
-        , objectiveGroups: objectiveGroups
-        , mapNames: mapNames
-        , objectives: objectives
-        , matchObjectives: matchObjectives
-        , timestamp: myUtil.toUtcTimeStamp(Date.now())
-        , objectiveState: GLOBAL.data.objectiveState[match.id]
+        lang: lang,
+        slug: slug,
+        
+        match: match,
+        world: world,
+        scores: scores,
+
+        objectiveGroups: objectiveGroups,
+        mapNames: mapNames,
+        objectives: objectives,
+        matchObjectives: matchObjectives,
+        timestamp: myUtil.toUtcTimeStamp(Date.now()),
+        objectiveState: GLOBAL.data.objectiveState[match.id],
 
         /*
         , objectives: objectives

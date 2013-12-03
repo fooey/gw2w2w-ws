@@ -1,10 +1,12 @@
 var humanize = require('humanize'),
-    _ = require('underscore'),
+    _ = require('lodash'),
     async = require('async'),
     path = require('path')
 
-var worldsController = require(path.join(GLOBAL.appRoot, '/lib/worlds.js')),
-    matchesController = require(path.join(GLOBAL.appRoot, '/lib/matches.js'))
+var myUtil = require(path.join(GLOBAL.appRoot, '/lib/util.js')),
+    worldsController = require(path.join(GLOBAL.appRoot, '/lib/worlds.js')),
+    matchesController = require(path.join(GLOBAL.appRoot, '/lib/matches.js')),
+    anet = require(path.join(GLOBAL.appRoot, '/lib/anet.js'))
 
 
 module.exports = function (req, res) {
@@ -27,13 +29,14 @@ module.exports = function (req, res) {
 
 
     var scores = {};
-    _.each(GLOBAL.data.matchDetails, function(match, matchId){
+    _.forEach(GLOBAL.data.matchDetails, function(match, matchId){
         scores[matchId] = match.scores;
     });
 
 
     res.render('overview', {
         title: 'GuildWars2 WvW Objectives Tracker',
+        langs: anet.langs,
         lang: lang,
         humanize: humanize,
         matches: matches,

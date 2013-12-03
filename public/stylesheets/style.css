@@ -18,11 +18,10 @@ body{
 .nowrap{display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
 
 
-/*
-.team.red, .team.red a{color: #900;}
-.team.blue, .team.blue a{color: #009;}
-.team.green, .team.green a{color: #090;}
-*/
+.well, .alert{
+	margin: 0 0;
+	padding: 0 0;
+}
 
 .team.red{color: #b94a48 !important}
 .team.blue{color: #3a87ad !important}
@@ -30,32 +29,104 @@ body{
 .team.neutral{color: #999 !important; font-style: italic;}
 
 
+#site-navbar{
+}
+#site-navbar .navbar-brand{
+	padding: 0 15px;
+	line-height: 50px;
+}
+.divider-vertical {
+    height: 50px;
+    margin: 0 9px;
+    border-left: 1px solid #F2F2F2;
+    border-right: 1px solid #FFF;
+}
+
+#indicator .fa,
+#audioToggle .fa{
+	line-height: 50px;
+}
+#audioToggle .fa-ban{
+	color: #b94a48;
+}
+
+
+
 table.overview td{}
 table.overview .group0{background-color: #eee}
-table.overview .score{text-align: right}
+table.overview .score{text-align: right;}
 
 table.overview .pie{}
 
 
+.team-score{
+	padding: 8px 0;
+}
+.team-score > *{
+	padding: 0;
+	margin: 0;
+	line-height: 120%;
+}
+.objectives .row{
+	margin: 0;
+}
+.map{
+	padding: 0 2px;
+}
+.map:first-child{
+	padding-left: 0;
+}
+.map:last-child{
+	padding-right: 0;
+}
 
-li.objective span + span{
-	margin-left: .5em;
+.map-name{
+	margin: 12px 0 4px 0;
+	font-size: 11pt;
+	font-weight: bold;
+	text-align: center;
+}
+
+div.objectives-group{
+	padding: 2px 2px;
+}
+div.objectives-group + div.objectives-group{
+	margin-top: 4px;
+}
+
+
+li.objective {
+	font-size: 10pt;
+	line-height: 15px;
+	height: 15px;
+	padding-left: 2px;
+	margin: 3px 0;
+}
+li.objective span{
+	height: 15px;
+	display: inline-block;
+	float: left;
+}
+li.objective span.sprite{
+	margin-right: 4px;
+}
+li.objective span.objective-name{
 }
 li.objective .timer{
 	float: right;
 	display: inline-block;
 	width: 40px;
-	//border: 1px solid black;
-	text-align: right;
+	font-size: 7.5pt;
+	height: 15px;
+	line-height: 15px;
 	font-family: monospace;
-	font-size: 12px;
-	line-height: 18px;
-	height: 18px;
+
+	text-align: right;
 	padding: 0 2px;
-}
-li.objective .timer small{
-	font-size: 10px;
-	line-height: 18px;
+
+	background-color: #ffe;
+	border: 1px solid #faebcc;
+	border-radius: 4px;
 }
 
 
@@ -70,7 +141,7 @@ li.objective .timer small{
 	display: inline-block;
 	width: 15px;
 	height: 15px;
-	line-height: 20px;
+	line-height: 15px;
 	
 	background-position: -45px -45px; //default
 }

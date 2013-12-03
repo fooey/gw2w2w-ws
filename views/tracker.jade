@@ -4,26 +4,29 @@ extends layout
 block content
 
     div(class="container", id="tracker")
-        div(class="row")
-            div(class="col-md-12")
-                h1(class='page-header')= title
+        //
+            div(class="row")
+                div(class="col-md-12")
+                    h1(class='page-header')= title
 
         br
         div(class="row totalScores")
             each world, worldIndex in [match.getRedWorld(lang), match.getBlueWorld(lang), match.getGreenWorld(lang)]
                 -var team = ['red', 'blue', 'green'][worldIndex];
                 div(class="col-md-4")
-                    div(class="well team " + team)
+                    div(class="team-score well team " + team)
                         h2(class="text-center")= world.name
                         h3(class="score text-center")= humanize.numberFormat(scores[worldIndex], 0)
 
-        div(class="row")
+        div(class="row objectives"): div(class="col-md-12"): div(class="row")
             -var ixMap = 0;
             each objectiveGroup, objectiveGroupName in objectiveGroups
-                div(class="col-md-3", title=objectiveGroupName)
-                    h4(class="text-center")= mapNames[ixMap++]
+                -var className = ['col-md-3', 'map'].join(' ');
+                div(class=className, title=objectiveGroupName, id="map-" + objectiveGroupName.toLowerCase())
+                    h4(class="map-name")= mapNames[ixMap++]
                     each section, sectionName in objectiveGroup
-                        div(class=section.groupClass, title=sectionName)
+                        -var className = [section.groupClass, 'objectives-group'].join(' ')
+                        div(class=className, title=sectionName)
                             //h5= sectionName
                             ul(class="list-unstyled")
                                 each objectiveId, ixObjective in section.objectives
@@ -35,10 +38,18 @@ block content
                                     -var spriteClass = ['sprite', objective.objectiveType.type, objectiveOwner].join(' ');
                                     li(class=liClass, id="objective-" + objective.id, data-lastcaptured=objectiveState[objective.id].lastCaptured)
                                         span(class=spriteClass)
-                                        span()= objective.getCommonName(lang)
+                                        span(class='objective-name')= objective.getCommonName(lang)
                                         if objectiveGuild
                                             span(class='guild-' + objectiveGuild)
                                         span(class='timer')= ''
+
+block worldLinks
+    each world, worldIndex in [match.getRedWorld(lang), match.getBlueWorld(lang), match.getGreenWorld(lang)]
+        -var team = ['red', 'blue', 'green'][worldIndex];
+        -var liClass = ['team', team];
+        if world.slug == slug
+            -liClass.push('active')
+        li(class=liClass): a(class=['team', team], href=world.link)= world.name
 
    
 

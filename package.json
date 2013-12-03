@@ -12,10 +12,10 @@
     "express": "3.x",
     "humanize": "*",
     "jade": "*",
+    "lodash": "*",
     "nodetime":"*",
     "request": "*",
     "slug": "*",
-    "underscore": "*",
     "uuid": "*",
     "ws": "*"
   },

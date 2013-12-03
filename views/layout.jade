@@ -2,13 +2,47 @@ doctype 5
 html
   head
     title= title
-    link(rel='stylesheet', href='//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css')
-    link(rel='stylesheet', href='/stylesheets/style.min.css')
-    link(rel='stylesheet', href="https://d1h9a8s8eodvjz.cloudfront.net/fonts/menomonia/08-02-12/menomonia.css")
-    link(rel='stylesheet', href="https://d1h9a8s8eodvjz.cloudfront.net/fonts/menomonia/08-02-12/menomonia-italic.css")
+    link(href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css", rel="stylesheet")
+    link(href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css", rel="stylesheet")
+    link(href='/stylesheets/style.min.css', rel='stylesheet')
+    link(href="https://d1h9a8s8eodvjz.cloudfront.net/fonts/menomonia/08-02-12/menomonia.css", rel='stylesheet')
+    link(href="https://d1h9a8s8eodvjz.cloudfront.net/fonts/menomonia/08-02-12/menomonia-italic.css", rel='stylesheet')
     
   body
+
+    nav#site-navbar.navbar.navbar-default(role='navigation')
+        .navbar-header
+            button.navbar-toggle(type='button', data-toggle='collapse', data-target='#navbar-collapse')
+                span.sr-only Toggle navigation
+                span.icon-bar
+                span.icon-bar
+                span.icon-bar
+            a.navbar-brand(href='/')
+                img(src="/images/logo-96x36.png")
+
+        ul.nav.navbar-nav.navbar-right
+            li#indicator.navbarIcon.text-muted.hidden
+                i.fa.fa-2x.fa-spinner.fa-spin.hidden
+            li.divider-vertical
+            li#audioToggle.navbarIcon.text-muted(data-enabled="false")
+                span.fa-stack
+                    i.fa.fa-stack-2x.fa-ban.text-error
+                    i.fa.fa-stack-1x.fa-volume-up
+            li.divider-vertical
+            each lang, langIndex in langs
+                li: a(href=lang.href, title=lang.name)= lang.label
+
+        #navbar-collapse.collapse.navbar-collapse
+            ul.nav.navbar-nav
+                block worldLinks
+
+
+
+
+
     block content
+
+
 
     hr
     footer
