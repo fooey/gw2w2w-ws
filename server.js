@@ -1,4 +1,10 @@
-var _ = require('underscore')
+if(process.env.NODETIME_ACCOUNT_KEY) {
+    require('nodetime').profile({
+        accountKey: process.env.NODETIME_ACCOUNT_KEY,
+        appName: 'gw2w2w-ws' // optional
+    });
+}
+
 
 GLOBAL.appRoot = __dirname;
 
