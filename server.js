@@ -1,6 +1,3 @@
-"use strict"
-
-GLOBAL.appRoot = __dirname;
 GLOBAL.dataReady = false;
 
 
@@ -20,22 +17,25 @@ const
 	server = http.createServer(app);
 
 const
-	config = require('./config/server.js')(app, express),
+	config = require('./config/server')(app, express),
 	routes = require('./routes')(app, express);
 
 const
 	WebSocketServer = require('ws').Server,
-	wss = new WebSocketServer({server:  server});	// use the same server that the http server uses
+	wss = new WebSocketServer({server:  server}),	// use the same server that the http server uses
+	now = require('lodash').now;
 
-GLOBAL.wssHandler = new require('./lib/socketHandler.js')(wss);
+GLOBAL.wssHandler = require('./lib/socketHandler');
+GLOBAL.wssHandler.setServer(wss);
+GLOBAL.wssHandler.start();
 
 
-require('./lib/dataUpdater.js').startUpdater();
+require('./lib/dataUpdater').startUpdater();
 
 
 //	start the http server listener
 server.listen(app.get('port'), function(){
-    console.log("Express server listening on port " + app.get('port'));
+    console.log(now(), "Express server listening on port " + app.get('port'));
 });
 
 

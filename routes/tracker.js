@@ -1,124 +1,75 @@
-var humanize = require('humanize'),
-    _ = require('lodash'),
-    async = require('async'),
-    path = require('path')
+const
+    path = require('path');
 
-var myUtil = require(path.join(GLOBAL.appRoot, '/lib/util.js')),
-    worldsController = require(path.join(GLOBAL.appRoot, '/lib/worlds.js')),
-    matchesController = require(path.join(GLOBAL.appRoot, '/lib/matches.js')),
-    objectivesController = require(path.join(GLOBAL.appRoot, '/lib/objectives.js')),
-    anet = require(path.join(GLOBAL.appRoot, '/lib/anet.js'))
+/*
+const
+    _ = require('lodash'),
+    async = require('async');
+*/
+
+const worldsController = require(path.join(process.cwd(), 'lib/worlds'));
+const objectivesController = require(path.join(process.cwd(), 'lib/objectives'));
+const matchesController = require(path.join(process.cwd(), 'lib/matches'));
+const matchDetailsController = require(path.join(process.cwd(), 'lib/matchDetails'));
+
+const
+    langs = require(path.join(process.cwd(), 'lib/anet')).getLangs();
     
 
 
 module.exports = function (req, res) {
-    var lang = req.params.lang;
-    var slug = req.params.worldName;
+    const lang = req.params.lang;
+    const slug = req.params.worldName;
 
-    var world = worldsController.getWorldBySlug(lang, slug);
-    var match = matchesController.getMatchByWorldId(world.id);
-    var scores = GLOBAL.data.matchDetails[match.id].scores;
+    if(!GLOBAL.dataReady){
+        require('./loading')(req, res);
+    }
+    else{
+        const world = worldsController.getWorldBySlug(lang, slug);
+        const match = matchesController.getMatchByWorldId(lang, world.getId());
+        const objectives = objectivesController.getAll();
 
+        const matchDetails = matchDetailsController.getMatchDetails(match.getId());
+        const matchObjectives = matchDetails.getObjectives();
+        const scores = matchDetails.getScores();
+        const mapNames = matchDetails.getMapNames(lang);
 
-    var mapNames = ['Eternal Battlegrounds'];
-    _.forEach([match.getRedWorld(lang), match.getBlueWorld(lang), match.getGreenWorld(lang)], function(world, i){
-        mapNames.push(world.name + ' Borderland');
-    })
-
-    var objectives = objectivesController.getAll();
-
-    var matchDetails = GLOBAL.data.matchDetails[match.id];
-
-
-    var matchObjectives = {};
-    var _objectives = _.flatten(matchDetails.maps, 'objectives');
-    _.forEach(_objectives, function(matchObjective, ix){
-        matchObjectives[matchObjective.id] = matchObjective;
-    });
+        const title = (world.getName() + ' WvW Objectives Tracker');
 
 
+        res.render(
+            'tracker'
+            , {
+                title: title
+                , langs: langs
 
-    res.render('tracker', {
-        title: world.name + ' WvW Objectives Tracker',
-        langs: anet.langs,
-        humanize: humanize,
+                , lang: lang
+                , slug: slug
+                
+                , match: match
+                , world: world
+                , scores: scores
 
-        lang: lang,
-        slug: slug,
-        
-        match: match,
-        world: world,
-        scores: scores,
+                , objectiveGroups: objectiveGroups
+                , mapNames: mapNames
+                , objectives: objectives
+                , matchObjectives: matchObjectives
+                , objectiveState: GLOBAL.data.objectiveState[match.getId()]
+            }
+        );
 
-        objectiveGroups: objectiveGroups,
-        mapNames: mapNames,
-        objectives: objectives,
-        matchObjectives: matchObjectives,
-        timestamp: myUtil.toUtcTimeStamp(Date.now()),
-        objectiveState: GLOBAL.data.objectiveState[match.id],
-
-        /*
-        , objectives: objectives
-        , objectivesMeta: GLOBAL.GW2.objectivesMeta
-        , matchDetails: matchDetails
-        , matchObjectives: matchObjectives
-        , dataHandler: GLOBAL.dataHandler
-        , objectiveCommonNames: objectiveCommonNames
-        , worlds: worlds
-        */
-    });
+    }
 };
 
 
+const
+    neutralGroupClass = 'alert alert-warning',
+    ruinsGroupClass = 'alert alert-warning',
+    redGroupClass = 'alert alert-danger',
+    blueGroupClass = 'alert alert-info',
+    greenGroupClass = 'alert alert-success';
 
-
-/*
-
-
-
-        //
-            br
-            div(class="row totalScores")
-                each team, ixTeam in ['red','blue','green']
-                    -var world = worlds[ixTeam]
-                    div(class="col-md-4")
-                        div(class="well team " + team)
-                            h2(class="text-center")= world.name
-                            h3(class="score text-center")= humanize.numberFormat(matchDetails.scores[ixTeam], 0)
-
-            div(class="row")
-                -var ixMap = 0;
-                each objectiveGroup, objectiveGroupName in objectiveGroups
-                    div(class="col-md-3", title=objectiveGroupName)
-                        h5(class="text-center")= mapNames[ixMap++]
-                        each section, sectionName in objectiveGroup
-                            div(class=section.groupClass, title=sectionName)
-                                ul(class="list-unstyled")
-                                    each objectiveId, ixObjective in section.objectives
-                                        -var matchObjective = matchObjectives[objectiveId];
-                                        -var objectiveOwner = matchObjective.owner.toLowerCase()
-                                        -var objectiveGuild = matchObjective.owner_guild
-                                        -var objective = objectives[objectiveId][lang];
-                                        -var liClass = ['objective', 'team', objectiveOwner, 'clearfix'].join(' ');
-                                        -var oMeta = objectivesMeta[objectiveId];
-                                        -var spriteClass = ['sprite', oMeta.type, objectiveOwner].join(' ');
-                                        li(class=liClass, id="objective-" + objectiveId, data-lastcaptured=oMeta.lastCaptured)
-                                            span(class=spriteClass)
-                                            span(class="name")= objectiveCommonNames[lang][objectiveId]
-                                            if objectiveGuild
-                                                span(class='guild-' + objectiveGuild)
-                                            span(class='timer') ??:??
-
-*/
-
-
-var neutralGroupClass = 'alert alert-warning';
-var ruinsGroupClass = 'alert alert-warning';
-var redGroupClass = 'alert alert-danger';
-var blueGroupClass = 'alert alert-info';
-var greenGroupClass = 'alert alert-success';
-
-var objectiveGroups = {
+const objectiveGroups = {
     'Center': {
         'Castle':{
             groupClass: neutralGroupClass

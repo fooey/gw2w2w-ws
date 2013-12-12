@@ -1,26 +1,6 @@
-var  path = require('path');
-var cacheRoot = path.join(GLOBAL.appRoot, '/cache');
+const path = require('path');
 
 
 module.exports = {
-	cacheFolder: cacheRoot,
-	worlds: {
-        maxAgeInSeconds: (60*60*24),
-        filePath: path.join(cacheRoot, 'worlds.json')
-    },
-    worlds: {
-        maxAgeInSeconds: (60*60*24),
-        filePath: path.join(cacheRoot, 'worlds.json')
-    },
-    objectives: {
-        maxAgeInSeconds: (60*60*24),
-        filePath: path.join(cacheRoot, 'objectives.json')
-    },
-    matches: {
-        maxAgeInSeconds: (60*60*24),
-        filePath: path.join(cacheRoot, 'matches.json')
-    },
-    matchesDetails: {
-        maxAgeInSeconds: (2)
-    }
+	cacheFolder: path.join(process.cwd(), 'cache')
 };

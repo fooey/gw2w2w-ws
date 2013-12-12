@@ -52,11 +52,12 @@ body{
 
 
 
-table.overview td{}
-table.overview .group0{background-color: #eee}
-table.overview .score{text-align: right;}
+table.overview tr.group0 td{background-color: #eee}
+table.overview td.name{width: 100%;}
+table.overview td.score{text-align: right;}
+table.overview td.pie{}
+table.overview canvas{}
 
-table.overview .pie{}
 
 
 .team-score{

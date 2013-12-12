@@ -8,9 +8,6 @@
 var $overview, $tracker;
 
 $(function(){
-    "use strict"
-
-
     $overview = $('.overview');
     if($overview.length){
         $overview.find('.pie').each(function(){
@@ -105,16 +102,17 @@ var subscribeToUpdates = function (channel) {
 
     wsClient.onopen = function () {
         var packet = { event: 'subscribe', channel: channel };
-        console.log(packet);
+        console.log('WS Send:', packet);
         wsClient.send(JSON.stringify(packet))
     };
     wsClient.onclose = function () {
-        //if the server drops connection, reload the page in 3 seconds
-        setTimeout(function(){window.location.reload()}, (2*1000));
+        reloadDelayed();
     };
 
     wsClient.onmessage = function (event) {
         var packets = event.data;
+
+        console.log('Recieved WS Message: ', packets);
 
         if (isJSON(packets)) {
             packets = JSON.parse(packets);
@@ -125,47 +123,60 @@ var subscribeToUpdates = function (channel) {
         }
 
         _.forEach(packets, function(packet, index){
-            //console.log('WS Packet', packet)
-            if (packet.event && packet.event == 'ping'){
-                var packet = {event: 'pong'};
-                console.log('WS Response: ', packet)
-                wsClient.send(JSON.stringify(packet));
-            }
-            else {
-                switch(channel){
-                    case 'overview':
-                        overviewEvents(packet);
-                        break;
-                    default:
-                        trackerEvents(packet);
-                        break;
-                }
+            switch(channel){
+                case 'global':
+                case 'loading':
+                    globalEvents(packet);
+                    break;
+
+                case 'overview':
+                    overviewEvents(packet);
+                    break;
+
+                default:
+                    trackerEvents(packet);
+                    break;
             }
         })
 
-        //console.log('Recieved WS Message: ', message);
     };
+}
+
+
+
+function globalEvents(message){
+    if (message.event){
+        switch(message.event){
+            case 'desync':
+            case 'resync':
+            case 'reset':
+                reloadDelayed();
+                break;
+        }
+    }
 }
 
 
 
 function overviewEvents(message){
 
-    if (message.event && message.event === 'updateScore') {
-        var eventArgs = message.arguments;
-		console.log('update match scores', eventArgs.matchId);
-        var $matchRows = $('.match' + eventArgs.matchId);
+    if (message.event){
+        if(message.event === 'updateScore') {
+            var eventArgs = message.arguments;
+    		console.log('update match scores', eventArgs.matchId);
+            var $matchRows = $('.match' + eventArgs.matchId);
 
-        $matchRows.each(function (i) {
-            var $that = $(this);
-            var score = Humanize.intcomma(eventArgs.scores[i]);
-            $that
-                .find('.score')
-                    .text(score)
-               
-        });
+            $matchRows.each(function (i) {
+                var $that = $(this);
+                var score = Humanize.intcomma(eventArgs.scores[i]);
+                $that
+                    .find('.score')
+                        .text(score)
+                   
+            });
 
-        drawPie($matchRows.find('.pie'));
+            drawPie($matchRows.find('.pie'));
+        }
     }
 }
 
@@ -213,6 +224,30 @@ function trackerEvents(message){
 *
 */
 
+var waitingForReload = false;
+function reload(ms){
+    if(!waitingForReload){
+        waitingForReload = true;
+        console.log('Reloading in %d ms', ms)
+        setTimeout(function(){window.location.reload()}, ms);
+    }
+}
+function reloadDelayed(msMin, msMax){
+    if(msMin && !msMax){
+        msMax = msMin;
+    }
+    else if(!msMin && !msMax){
+        msMax = msMax || 0*1000;
+        msMin = msMin || 1*1000;
+    }
+    var ms = ms || randRange(msMin, msMax);
+    reload(ms);
+}
+function reloadNow(){
+    reload(0);
+}
+
+
 function isJSON(data) {
     var isJson = false
     try {
@@ -238,4 +273,15 @@ function minuteFormat(seconds){
     var txt = minutes + ':' +  seconds;
     
     return txt;
+}
+
+function randRange(rangeMin, rangeMax) {
+    var randInRange = Math.round(
+        (
+            Math.random()
+            * (rangeMax - rangeMin)
+        )
+        + rangeMin
+    );
+    return randInRange;
 }

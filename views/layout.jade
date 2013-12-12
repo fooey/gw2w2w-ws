@@ -2,11 +2,14 @@ doctype 5
 html
   head
     title= title
+
     link(href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css", rel="stylesheet")
     link(href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css", rel="stylesheet")
     link(href='/stylesheets/style.min.css', rel='stylesheet')
     link(href="https://d1h9a8s8eodvjz.cloudfront.net/fonts/menomonia/08-02-12/menomonia.css", rel='stylesheet')
     link(href="https://d1h9a8s8eodvjz.cloudfront.net/fonts/menomonia/08-02-12/menomonia-italic.css", rel='stylesheet')
+
+    block headClose
     
   body
 
@@ -29,8 +32,9 @@ html
                     i.fa.fa-stack-2x.fa-ban.text-error
                     i.fa.fa-stack-1x.fa-volume-up
             li.divider-vertical
-            each lang, langIndex in langs
-                li: a(href=lang.href, title=lang.name)= lang.label
+            if(langs)
+                each lang, langIndex in langs
+                    li: a(href=lang.href, title=lang.name)= lang.label
 
         #navbar-collapse.collapse.navbar-collapse
             ul.nav.navbar-nav
@@ -46,20 +50,20 @@ html
 
     hr
     footer
-        div(class="container")
-            div(class="row")
-                div(class="col-md-12 text-center")
-                    p(class="")
+        div.container
+            div.row
+                div.col-md-12.text-center
+                    p
                         |Please send comments, bugs, and sweet, sweet donations to fooey.5824
                         |Or, /wave at Zyrrii [CORE] if you wander by on Fort Aspenwood <br>
                         |Source available at 
                         a(href="https://github.com/fooey/gw2w2w-ws", target="_blank")
                             |https://github.com/fooey/gw2w2w-ws
-                    p(class="muted")
+                    p.muted
                         |© 2013 ArenaNet, Inc. All rights reserved. NCsoft, the interlocking NC logo, ArenaNet, Guild Wars, Guild Wars Factions, 
                         |Guild Wars Nightfall, Guild Wars: Eye of the North, Guild Wars 2, and all associated logos and designs are trademarks or 
                         |registered trademarks of NCsoft Corporation. All other trademarks are the property of their respective owners.
-                    p(class="muted")
+                    p.muted
                         |Generated at #{new Date()}
     
 
@@ -73,4 +77,4 @@ html
     script(src="/javascripts/script.js")
 
     
-    block scripts
+    block bodyClose
