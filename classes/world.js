@@ -1,7 +1,9 @@
 "use strict"
+const path = require ('path');
 
 const slugify = require ('slug');
 const _ = require('lodash');
+
 
 
 function World(parameters) {
@@ -18,7 +20,9 @@ function World(parameters) {
         id: parseInt(parameters.id),
         name: parameters.name,
         lang: parameters.lang,
-        //slug, link, region
+        slug: parameters.slug,
+        region: parameters.region,
+        link: ['/', parameters.lang, '/', parameters.slug].join(''),
     };
 
 
@@ -32,19 +36,9 @@ function World(parameters) {
     obj.getId = function(){return __INSTANCE.id;}
     obj.getName = function(){return __INSTANCE.name;}
     obj.getLang = function(){return __INSTANCE.lang;}
-
-    obj.getSlug = _.memoize(function(){
-        return slugify(obj.getName().toLowerCase()).replace('\'', '');
-    });
-
-    obj.getLink = _.memoize(function(){
-        return ['/', obj.getLang(), '/', obj.getSlug()].join('');
-    });
-
-    obj.getRegion = _.memoize(function(){
-        if(obj.getId() >=  1000 && obj.getId() < 2000) return 'US';
-        if(obj.getId() >=  2000 && obj.getId() < 3000) return 'EU';
-    });
+    obj.getSlug = function(){return __INSTANCE.slug;}
+    obj.getRegion = function(){return __INSTANCE.region;}
+    obj.getLink = function(){return __INSTANCE.link;}
     
 };
 
