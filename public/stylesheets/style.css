@@ -21,6 +21,10 @@ body{
 .well, .alert{
 	margin: 0 0;
 	padding: 0 0;
+	min-height: 0;
+}
+.well>p, .well>ul{
+	margin-bottom: 0;
 }
 
 .team.red{color: #b94a48 !important}

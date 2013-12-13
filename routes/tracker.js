@@ -64,7 +64,7 @@ module.exports = function (req, res) {
 
 const
     neutralGroupClass = 'alert alert-warning',
-    ruinsGroupClass = 'alert alert-warning',
+    ruinsGroupClass = 'well',
     redGroupClass = 'alert alert-danger',
     blueGroupClass = 'alert alert-info',
     greenGroupClass = 'alert alert-success';

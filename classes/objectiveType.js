@@ -14,8 +14,9 @@ function ObjectiveType (parameters) {
     */
     const __INSTANCE = {
         id: parameters.id,
-        type: parameters.type,
+        timer: parameters.timer,
         value: parameters.value,
+        type: parameters.type,
     }
 
 
@@ -27,8 +28,9 @@ function ObjectiveType (parameters) {
     */
 
     obj.getId = function(){return __INSTANCE.id;}
-    obj.getType = function(){return __INSTANCE.type;}
     obj.getValue = function(){return __INSTANCE.value;}
+    obj.getTimer = function(){return __INSTANCE.timer;}
+    obj.getType = function(){return __INSTANCE.type;}
 };
 
 module.exports = ObjectiveType;

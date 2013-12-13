@@ -32,15 +32,18 @@ block content
                                     -var matchObjective = matchObjectives[objectiveId];
                                     -var objectiveOwner = matchObjective.owner.toLowerCase()
                                     -var objectiveGuild = matchObjective.owner_guild
+                                    -var objectiveType = matchObjective.objective.getObjectiveType().getType()
+                                    -var useTimer = matchObjective.objective.getObjectiveType().getTimer()
                                     //-var objective = objectivesController.getById(objectiveId);
                                     -var liClass = ['objective', 'team', objectiveOwner, 'clearfix'];
-                                    -var spriteClass = ['sprite', matchObjective.objective.getObjectiveType().type, objectiveOwner];
+                                    -var spriteClass = ['sprite', objectiveOwner, objectiveType];
                                     li(class=liClass, id="objective-" + objectiveId, data-lastcaptured=objectiveState[objectiveId].lastCaptured)
                                         span(class=spriteClass)
                                         span.objective-name= matchObjective.objective.getCommonName(lang)
-                                        if objectiveGuild
+                                        if(objectiveGuild)
                                             span(class='guild-' + objectiveGuild)
-                                        span.timer
+                                        if(useTimer)
+                                            span.timer
 
 block worldLinks
     each world, worldIndex in [match.getRedWorld(lang), match.getBlueWorld(lang), match.getGreenWorld(lang)]

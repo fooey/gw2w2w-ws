@@ -75,10 +75,10 @@ var updateTimers = function updateTimers(){
         var timeHeld = now - lastCaptured;
 
         if(timeHeld < buffTimer){
-            $that.find('.timer').html(minuteFormat(buffTimer - timeHeld))
+            $that.find('.timer').show().html(minuteFormat(buffTimer - timeHeld))
         }
         else{
-            $that.find('.timer').text('')
+            $that.find('.timer:visible').text('').hide();
             //$that.find('.timer').html('<small>+' + timeHeld + '</small>')
         }
 

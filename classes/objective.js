@@ -40,9 +40,9 @@ function Objective (parameters) {
         return objectiveTypesController.getObjectiveType(obj.getName());
     });
 
-    obj.getCommonName = _.memoize(function(lang){
+    obj.getCommonName = function(lang){
         return objectiveCommonNames[lang][obj.getId()];
-    });
+    };
 
 };
 
