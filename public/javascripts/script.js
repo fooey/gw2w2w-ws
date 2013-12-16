@@ -226,10 +226,26 @@ function trackerEvents(message){
 
 var waitingForReload = false;
 function reload(ms){
+    // possible for multiple WS messages to trigger reloads, only allow one
     if(!waitingForReload){
         waitingForReload = true;
-        console.log('Reloading in %d ms', ms)
-        setTimeout(function(){window.location.reload()}, ms);
+        console.log('Reloading in %d ms', ms);
+
+        setTimeout(function(){
+            $.ajax({
+                url: window.location,
+                type: 'head',
+                timeout: (3*1000)
+            }).done(function(data, textStatus, jqXHR){
+                window.location.reload()
+            }).fail(function(data, textStatus, jqXHR){
+                console.log('*********************************');
+                console.log(' App not ready, requeuing reload ')
+                console.log('*********************************');
+                waitingForReload = false;
+                reloadDelayed();
+            });
+        }, ms);
     }
 }
 function reloadDelayed(msMin, msMax){
@@ -237,8 +253,8 @@ function reloadDelayed(msMin, msMax){
         msMax = msMin;
     }
     else if(!msMin && !msMax){
-        msMax = msMax || 0*1000;
-        msMin = msMin || 1*1000;
+        msMax = msMax || 1*1000;
+        msMin = msMin || 3*1000;
     }
     var ms = ms || randRange(msMin, msMax);
     reload(ms);
