@@ -25,9 +25,9 @@ const WebSocketServer = require('ws').Server;
 const wss = new WebSocketServer({server:  server});	// use the same server that the http server uses
 const now = require('lodash').now;
 
-GLOBAL.wssHandler = require('./lib/socketHandler');
-GLOBAL.wssHandler.setServer(wss);
-GLOBAL.wssHandler.start();
+GLOBAL.WebSocketServer = require('./lib/socketHandler');
+GLOBAL.WebSocketServer.setServer(wss);
+GLOBAL.WebSocketServer.start();
 
 
 require('./lib/dataUpdater').startUpdater();

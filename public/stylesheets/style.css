@@ -33,8 +33,7 @@ body{
 .team.neutral{color: #999 !important; font-style: italic;}
 
 
-#site-navbar{
-}
+#site-navbar{}
 #site-navbar .navbar-brand{
 	padding: 0 15px;
 	line-height: 50px;
@@ -56,11 +55,28 @@ body{
 
 
 
-table.overview tr.group0 td{background-color: #eee}
-table.overview td.name{width: 100%;}
-table.overview td.score{text-align: right;}
-table.overview td.pie{}
-table.overview canvas{}
+//.overview .group0 td{background-color: #eee}
+.overview{
+	padding: 0 .5em;
+}
+.overview .match + .match{
+	padding-top: .5em;
+}
+.overview .world{
+	height: 30px;
+	line-height: 30px;
+}
+.overview .world:nth-child(2){
+	background-color: #f9f9f9;
+}
+.overview .world:hover{
+	background-color: #ffd;
+}
+.overview .score{text-align: right;}
+.overview .pie{width: 90px; height: 90px; margin: 0 auto;}
+.overview {}
+
+
 
 
 
@@ -201,3 +217,30 @@ li.objective .timer{
 .sprite.estate.green				{ background-position: -30px -90px; }
 .sprite.overlook.green			{ background-position: -30px -105px; }
 .sprite.ascent.green				{ background-position: -30px -120px; }
+
+
+
+
+.loading-spinner {
+	width: 168px;
+	height: 168px;
+	margin: 100px 0 0 0;
+	-webkit-animation: rotateplane 3s infinite ease-in-out;
+	animation: rotateplane 3s infinite ease-in-out;
+}
+
+@-webkit-keyframes rotateplane {
+	0% { -webkit-transform: perspective(120px) }
+	25% { -webkit-transform: perspective(120px) rotateY(180deg) rotateX(0deg) }
+	50% { -webkit-transform: perspective(120px) rotateY(180deg)  rotateX(180deg) }
+	75% { -webkit-transform: perspective(120px) rotateY(0deg) rotateX(180deg) }
+	100% { -webkit-transform: perspective(120px) }
+}
+
+@keyframes rotateplane {
+	0% { -webkit-transform: perspective(120px) }
+	25% { -webkit-transform: perspective(120px) rotateY(180deg) rotateX(0deg) }
+	50% { -webkit-transform: perspective(120px) rotateY(180deg)  rotateX(180deg) }
+	75% { -webkit-transform: perspective(120px) rotateY(0deg) rotateX(180deg) }
+	100% { -webkit-transform: perspective(120px) }
+}

@@ -3,58 +3,48 @@ extends layout
 
 block content
 
-    #tracker.container
-        //-
-            div(class="row")
-                div(class="col-md-12")
-                    h1(class='page-header')= title
-
+    #tracker
         br
         section.row.totalScores
-            each world, worldIndex in [match.getRedWorld(lang), match.getBlueWorld(lang), match.getGreenWorld(lang)]
+            each world, worldIndex in [match.redWorld, match.blueWorld, match.greenWorld]
                 -var team = ['red', 'blue', 'green'][worldIndex];
                 div.col-md-4: div(class="team-score well team " + team)
-                    h2.text-center= world.getName()
-                    h3.score.text-center(data-score=scores.numeric[worldIndex])= scores.formatted[worldIndex]
+                    h2.text-center= world.name
+                    h3.score.text-center(data-score=matchDetails.scores[worldIndex])= matchDetails.scoresFormatted[worldIndex]
 
-        div.row.objectives: div.col-md-12: div.row
-            -var ixMap = 0;
-            each objectiveGroup, objectiveGroupName in objectiveGroups
-                -var className = ['col-md-3', 'map'];
-                section(class=className, title=objectiveGroupName, id="map-" + objectiveGroupName.toLowerCase())
-                    h4.map-name= mapNames[ixMap++]
-                    each section, sectionName in objectiveGroup
-                        -var className = [section.groupClass, 'objectives-group']
-                        div(class=className, title=sectionName)
-                            //h5= sectionName
-                            ul.list-unstyled
-                                each objectiveId in section.objectives
-                                    -var matchObjective = matchObjectives[objectiveId];
-                                    -var objectiveOwner = matchObjective.owner.toLowerCase()
-                                    -var objectiveGuild = matchObjective.owner_guild
-                                    -var objectiveType = matchObjective.objective.getObjectiveType().getType()
-                                    -var useTimer = matchObjective.objective.getObjectiveType().getTimer()
-                                    //-var objective = objectivesController.getById(objectiveId);
-                                    -var liClass = ['objective', 'team', objectiveOwner, 'clearfix'];
-                                    -var spriteClass = ['sprite', objectiveOwner, objectiveType];
-                                    li(class=liClass, id="objective-" + objectiveId, data-lastcaptured=objectiveState[objectiveId].lastCaptured)
-                                        span(class=spriteClass)
-                                        span.objective-name= matchObjective.objective.getCommonName(lang)
-                                        if(objectiveGuild)
-                                            span(class='guild-' + objectiveGuild)
-                                        if(useTimer)
-                                            span.timer
 
-block worldLinks
-    each world, worldIndex in [match.getRedWorld(lang), match.getBlueWorld(lang), match.getGreenWorld(lang)]
-        -var team = ['red', 'blue', 'green'][worldIndex];
-        -var liClass = ['team', team];
-        if world.getSlug() == slug
-            -liClass.push('active')
-        li(class=liClass): a(class=['team', team], href=world.getLink())= world.getName()
+            div.row.objectives: div.col-md-12: div.row
+                -var ixMap = 0;
+                each objectiveGroup, objectiveGroupName in objectiveGroups
+                    -var className = ['col-md-3', 'map'];
+                    section(class=className, title=objectiveGroupName, id="map-" + objectiveGroupName.toLowerCase())
+                        h4.map-name= matchDetails.mapNames[ixMap++]
+                        each section, sectionName in objectiveGroup
+                            -var className = [section.groupClass, 'objectives-group']
+                            div(class=className, title=sectionName)
+                                //h5= sectionName
+                                ul.list-unstyled
+                                    each objectiveId in section.objectives
+                                        -var objective = objectives[objectiveId];
+                                        -var objectiveType = objective.objectiveType;
+                                        li(id="objective-" + objectiveId, class=['objective', 'team', objective.owner, 'clearfix'], data-lastcaptured=objective.lastCaptured)
+                                            span(class=['sprite', objective.owner, objectiveType.type])
+                                            span.objective-name= objective.commonName
+                                            if(objective.guildId)
+                                                span(class='guild-' + objective.guildId)
+                                            if(objectiveType.timer)
+                                                span.timer
 
    
+block worldLinks
+    each world, worldIndex in [match.redWorld, match.blueWorld, match.greenWorld]
+        -var team = ['red', 'blue', 'green'][worldIndex];
+        -var liClass = ['team', team];
+        if world.slug == urlSlug
+            -liClass.push('active')
+        li(class=liClass): a(class=['team', team], href=world.link)= world.name
+
 
 block bodyClose     
     script.
-        $(function(){subscribeToUpdates('match#{match.getId()}');});
+        $(function(){subscribeToUpdates('match#{match.id}');});

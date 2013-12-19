@@ -2,59 +2,65 @@ extends layout
 
 
 block content
-    div.container
-        div.row: div.col-md-12.text-center: a(href="/"): img.block-center.img-responsive(src="/images/logo-512x192.png")
+		.row: .col-md-12.text-center: a(href="/"): img.block-center.img-responsive(src="/images/logo-512x192.png")
+		br
+		section.row
+			.col-md-6
+				h2.page-header() US Matches
+				+writeMatches(matches.US)
+			.col-md-6 
+				h2.page-header() EU Matches
+				+writeMatches(matches.EU)
 
-        br
-    
-        section.row
-            div.col-md-6
-                h2() US Matches
-                +writeMatchesTable(matches.US)
-            div.col-md-6
-                h2() EU Matches
-                +writeMatchesTable(matches.EU)
-
-
-        section.row
-            div.col-md-6
-                h3.page-header US Worlds
-                +writeWorlds(worlds.US)
-            div.col-md-6
-                h3.page-header EU Worlds
-                +writeWorlds(worlds.EU)
-   
+		section.row
+			.col-md-6
+				h3.page-header US Worlds
+				+writeWorlds(worlds.US)
+			.col-md-6
+				h3.page-header EU Worlds
+				+writeWorlds(worlds.EU)
 
 
-block bodyClose     
-    script.
-        $(function(){subscribeToUpdates('overview')});
+block bodyClose
+	script.
+		$(function(){subscribeToUpdates('overview')});
 
 
 
 
-mixin writeMatchesTable(matches)
-    table(class="table table-condensed table-hover overview")
-        -var matchNum = 0;
-        each match in matches
-            -matchNum++;
-            //-tr: td(colspan=3)= match.getId()
-            each world, worldIndex in [match.getRedWorld(lang), match.getBlueWorld(lang), match.getGreenWorld(lang)]
-                if(world)
-                    -var team = ['red', 'blue', 'green'][worldIndex];
-                    -var trClass = ['group' + (matchNum%2), 'match' + match.getId(), 'team', team];
-                    -var aClass = ['team', team].join(' ');
-                    -var scoreNumeric = match.getScores().numeric[worldIndex];
-                    -var scoreFormatted = match.getScores().formatted[worldIndex];
-                    tr(id='world' + world.getId(), class=trClass)
-                        td.name:  a(href=world.getLink(), class=aClass)= world.getName()
-                        td.score(data-score=scoreNumeric)= scoreFormatted
-                        if(worldIndex === 0)
-                            td.pie(rowspan=3, align="center", valign="center"): canvas(width="80", height="80")
+mixin writeMatches(matches)
+	section.overview
+		-var matchNum = 0;
+		each match in matches
+			-matchNum++;
+			//-tr: td(colspan=3)= match.getId()
+			.match.row(id="match"+ match.id)
+				.worlds.col-md-9.col-xs-9
+					each world, worldIndex in [match.redWorld, match.blueWorld, match.greenWorld]
+						-var team = ['red', 'blue', 'green'][worldIndex];
+						.world.row(id="world"+ world.id, class=['team', team])
+							.name.col-md-9.col-xs-9
+								a(href=world.link, class=['team', team])= world.name
+							.score.col-md-3.col-xs-3(data-score= match.scores[worldIndex])
+								= match.scoresFormatted[worldIndex]
+
+				.col-md-3.col-xs-3.pie
+					canvas(width="90", height="90")
+			//-
+				each world, worldIndex in [match.redWorld, match.blueWorld, match.greenWorld]
+					-var team = ['red', 'blue', 'green'][worldIndex];
+					-var trClass = ['group' + (matchNum%2), 'match' + match.id, 'team', team];
+					-var aClass = ['team', team].join(' ');
+					-var scoreNumeric = match.scores[worldIndex];
+					-var scoreFormatted = match.scoresFormatted[worldIndex];
+					tr(id='world' + world.id, class=trClass)
+						td.name:  a(href=world.link, class=aClass)= world.name
+						td.score(data-score=scoreNumeric)= scoreFormatted
+						if(worldIndex === 0)
+							td.pie(rowspan=3, align="center", valign="center")
 
 
 mixin writeWorlds(worlds)
-    ul(class="nav nav-list")
-        each world in worlds
-            li
-                a(href=world.getLink())= world.getName()
+	ul
+		each world in worlds
+			li: a(href=world.link)= world.name

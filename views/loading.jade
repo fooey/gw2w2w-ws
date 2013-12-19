@@ -1,14 +1,11 @@
 extends layout
 
-
 block content
-
-	#loading.container: .row: .col-md-12
+	#loading: .row: .col-md-12
 		.alert.alert-warning
-			h1.text-center(style="margin: 3em 0")
-				i.fa.fa-2x.fa-spinner.fa-spin
-				| <br><br> Waiting for data from Arena.net
-
+			div.text-center
+				img.loading-spinner(src="/images/gw2-dragon-256.png")
+			h1.text-center(style="margin: 3em 0") Loading, Please Wait...
 
 block bodyClose
 	script.

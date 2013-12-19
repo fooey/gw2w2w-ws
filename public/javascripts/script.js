@@ -35,10 +35,10 @@ $(function(){
 
 
 var drawPie = function($pie){
-    var $baseTR = $pie.closest('tr');
-    var redScore = $baseTR.find('.score').data('score') || 0;
-    var blueScore = $baseTR.next().find('.score').data('score') || 0;
-    var greenScore = $baseTR.next().next().find('.score').data('score') || 0;
+    var $match = $pie.closest('.match');
+    var redScore = $match.find('.world.red .score').data('score') || 0;
+    var blueScore = $match.find('.world.blue .score').data('score') || 0;
+    var greenScore = $match.find('.world.green .score').data('score') || 0;
 
     var data = [{
         value: redScore,
@@ -164,9 +164,9 @@ function overviewEvents(message){
         if(message.event === 'updateScore') {
             var eventArgs = message.arguments;
     		console.log('update match scores', eventArgs.matchId);
-            var $matchRows = $('.match' + eventArgs.matchId);
+            var $match = $('#match' + eventArgs.matchId);
 
-            $matchRows.each(function (i) {
+            $match.find('.world').each(function (i) {
                 var $that = $(this);
                 var score = Humanize.intcomma(eventArgs.scores[i]);
                 $that
@@ -175,7 +175,7 @@ function overviewEvents(message){
                    
             });
 
-            drawPie($matchRows.find('.pie'));
+            drawPie($match.find('.pie'));
         }
     }
 }
@@ -225,13 +225,30 @@ function trackerEvents(message){
 */
 
 var waitingForReload = false;
+
+var $alertDiv;
+$(function(){
+     $('<div id="priorityAlert" class="alert alert-danger" style="margin: 1em 0; padding: 1em; text-align: center; vertical-align: middle;"><h1>Application has requested a page reload</h1></div>').hide().prependTo('#content')
+});
+
+
 function reload(ms){
     // possible for multiple WS messages to trigger reloads, only allow one
     if(!waitingForReload){
         waitingForReload = true;
         console.log('Reloading in %d ms', ms);
 
+       
+        $('#priorityAlert').slideDown('fast');
+
         setTimeout(function(){
+
+            $('#priorityAlert')
+                .find('h3')
+                    .fadeOut('fast', function(){
+                        $(this).remove();
+                    });
+
             $.ajax({
                 url: window.location,
                 type: 'head',
@@ -240,10 +257,19 @@ function reload(ms){
                 window.location.reload()
             }).fail(function(data, textStatus, jqXHR){
                 console.log('*********************************');
-                console.log(' App not ready, requeuing reload ')
+                console.log(' App not ready, requeuing reload ');
                 console.log('*********************************');
+
+                $('#priorityAlert')
+                    .css({minHeight: '160px'})
+                    .append(
+                         $('<h3>Application unavailable, requeuing page reload...</h3>')
+                            .hide()
+                            .fadeIn('fast')
+                    );
+
                 waitingForReload = false;
-                reloadDelayed();
+                reloadDelayed(4000, 8000);
             });
         }, ms);
     }
