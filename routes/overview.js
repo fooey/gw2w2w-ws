@@ -84,7 +84,7 @@ module.exports = function (req, res) {
 		                'EU': _.filter(mergedMatches, function(match){return match.region === 'EU'}),
 		            };
 
-                    console.log(allWorlds);
+                    console.log('matches: ', matches);
 
 
 		            res.render('overview', {
