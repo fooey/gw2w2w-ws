@@ -69,8 +69,9 @@ module.exports = function (req, res) {
 	                match.redWorld = _.find(allWorlds, function(world){return world.id === match.redWorldId});
 	                match.greenWorld = _.find(allWorlds, function(world){return world.id === match.greenWorldId});
 	                match.blueWorld = _.find(allWorlds, function(world){return world.id === match.blueWorldId});
-	                match.scores = _.find(allScores, function(matchScore){return matchScore.match_id === match.id}).scores;
+	                match.scores = (_.isArray(allScores) && allScores[0].scores) ? _.find(allScores, function(matchScore){return matchScore.match_id === match.id}).scores : [0,0,0];
 	                match.scoresFormatted = _.map(match.scores, function(score) { return humanize.numberFormat(score, 0); });
+
 	                next(null, match);
 	            },
 	            function(err, mergedMatches){
