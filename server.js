@@ -8,6 +8,8 @@ if(process.env.NODETIME_ACCOUNT_KEY) {
     });
 }
 
+console.log(Date.now(), 'Starting Node.js', process.version)
+
 
 
 
