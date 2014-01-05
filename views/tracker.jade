@@ -9,7 +9,7 @@ block content
             each world, worldIndex in [match.redWorld, match.blueWorld, match.greenWorld]
                 -var team = ['red', 'blue', 'green'][worldIndex];
                 div.col-md-4: div(class="team-score well team " + team)
-                    h2.text-center= world.name
+                    h2.text-center= world[urlLang].name
                     h3.score.text-center(data-score=matchDetails.scores[worldIndex])= matchDetails.scoresFormatted[worldIndex]
 
 
@@ -26,13 +26,14 @@ block content
                                 ul.list-unstyled
                                     each objectiveId in section.objectives
                                         -var objective = objectives[objectiveId];
-                                        -var objectiveType = objective.objectiveType;
-                                        li(id="objective-" + objectiveId, class=['objective', 'team', objective.owner, 'clearfix'], data-lastcaptured=objective.lastCaptured)
-                                            span(class=['sprite', objective.owner, objectiveType.type])
-                                            span.objective-name= objective.commonName
-                                            if(objective.guildId)
-                                                span(class='guild-' + objective.guildId)
-                                            if(objectiveType.timer)
+                                        -var state = objectiveState[objectiveId]
+                                        -var liClass = ['objective', 'team', state.owner.color.toLowerCase(), 'clearfix'];
+                                        li(id="objective-" + objectiveId, class=liClass, data-lastcaptured=state.owner.timestamp)
+                                            span(class=['sprite', state.owner.color.toLowerCase(), objective.type.type])
+                                            span.objective-name= objective.commonNames[urlLang]
+                                            if(state.guild.id)
+                                                span(class='guild-' + state.guild.id)
+                                            if(objective.type.timer)
                                                 span.timer
 
    

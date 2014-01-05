@@ -42,13 +42,13 @@ var drawPie = function($pie){
 
     var data = [{
         value: redScore,
-        color:"#b94a48"
+        color:"#a94442"
     },{
         value : blueScore,
-        color : "#3a87ad"
+        color : "#31708f"
     },{
         value : greenScore,
-        color : "#468847"
+        color : "#3c763d"
     }];
 
     var ctx = $pie.find('canvas').get(0).getContext("2d");
@@ -199,17 +199,17 @@ function trackerEvents(message){
         var eventArgs = message.arguments;
         console.log('update objective owner', eventArgs);
 
-        var $objective = $('#objective-' + eventArgs.objective.id);
+        var $objective = $('#objective-' + eventArgs.objectiveId);
         var $sprite = $objective.find('.sprite');
 
         $objective
             .removeClass('red green blue neutral')
-            .addClass(eventArgs.objective.owner.toLowerCase())
-            .data('lastcaptured', Math.floor(Date.now() / 1000))
+            .addClass(eventArgs.owner.toLowerCase())
+            .data('lastcaptured', eventArgs.timestamp)
 
         $sprite
             .removeClass('red green blue neutral')
-            .addClass(eventArgs.objective.owner.toLowerCase())
+            .addClass(eventArgs.owner.toLowerCase())
        
     }
 }
@@ -305,12 +305,8 @@ function minuteFormat(seconds){
     var minutes = Math.floor(seconds / 60);
     seconds -= (minutes * 60);
     
-    if(seconds === 0){
-        seconds = '00';
-    }
-    else if(seconds < 10){
-        seconds = '0' + seconds;
-    }
+    seconds = ('00' + seconds);
+    seconds = seconds.substring(seconds.length-2, seconds.length);
     
     var txt = minutes + ':' +  seconds;
     

@@ -5,17 +5,18 @@ html
 
 		meta(name="viewport", content="width=device-width, initial-scale=1.0")
 
-		link(href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css", rel="stylesheet")
+		link(href="/todc/css/bootstrap.min.css", rel="stylesheet")
+		link(href="/todc/css/todc-bootstrap.min.css", rel="stylesheet")
 		link(href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css", rel="stylesheet")
-		link(href='/stylesheets/style.min.css', rel='stylesheet')
 		link(href="https://d1h9a8s8eodvjz.cloudfront.net/fonts/menomonia/08-02-12/menomonia.css", rel='stylesheet')
 		link(href="https://d1h9a8s8eodvjz.cloudfront.net/fonts/menomonia/08-02-12/menomonia-italic.css", rel='stylesheet')
+		link(href='/stylesheets/style.min.css', rel='stylesheet')
 
 		block headClose
 
 	body
 
-		nav#site-navbar.navbar.navbar-default(role='navigation')
+		nav#site-navbar.navbar.navbar-default.navbar-inverse(role='navigation')
 			.navbar-header
 				button.navbar-toggle(type='button', data-toggle='collapse', data-target='#navbar-collapse')
 					span.sr-only Toggle navigation

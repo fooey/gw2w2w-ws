@@ -7,18 +7,18 @@ block content
 		section.row
 			.col-md-6
 				h2.page-header() US Matches
-				+writeMatches(matches.US)
+				+writeMatches(matchLists.US)
 			.col-md-6 
 				h2.page-header() EU Matches
-				+writeMatches(matches.EU)
+				+writeMatches(matchLists.EU)
 
 		section.row
 			.col-md-6
 				h3.page-header US Worlds
-				+writeWorlds(worlds.US)
+				+writeWorlds(worldLists.US)
 			.col-md-6
 				h3.page-header EU Worlds
-				+writeWorlds(worlds.EU)
+				+writeWorlds(worldLists.EU)
 
 
 block bodyClose
@@ -28,19 +28,20 @@ block bodyClose
 
 
 
-mixin writeMatches(matches)
+mixin writeMatches(matchList)
 	section.overview
 		-var matchNum = 0;
-		each match in matches
+		each matchId in matchList
 			-matchNum++;
+			-match = matches[matchId]
 			//-tr: td(colspan=3)= match.getId()
-			.match.row(id="match"+ match.id)
+			.match.row(id="match"+ matchId)
 				.worlds.col-md-9.col-xs-9
 					each world, worldIndex in [match.redWorld, match.blueWorld, match.greenWorld]
 						-var team = ['red', 'blue', 'green'][worldIndex];
 						.world.row(id="world"+ world.id, class=['team', team])
 							.name.col-md-9.col-xs-9
-								a(href=world.link, class=['team', team])= world.name
+								a(href=world[lang].link, class=['team', team])= world[lang].name
 							.score.col-md-3.col-xs-3(data-score= match.scores[worldIndex])
 								= match.scoresFormatted[worldIndex]
 
@@ -60,7 +61,8 @@ mixin writeMatches(matches)
 							td.pie(rowspan=3, align="center", valign="center")
 
 
-mixin writeWorlds(worlds)
+mixin writeWorlds(worldList)
 	ul
-		each world in worlds
-			li: a(href=world.link)= world.name
+		each worldId in worldList
+			-var world = worlds[worldId]
+			li: a(href=world[lang].link)= world[lang].name

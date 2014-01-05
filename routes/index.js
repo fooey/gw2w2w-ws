@@ -15,15 +15,29 @@ module.exports = function(app, express){
 
 
 
-    app.get('/resetMatches', function(req, res){
-		require('../lib/matches').resetMatches(function(){
-			res.send('done')
-		});
-    });
+    app.get('/reset', function(req, res){
+        const fs = require('fs');
+        const path = require('path');
+        const async = require('async');
 
-    app.get('/resetAll', function(req, res){
-		require('../lib/db').dropDatabase(function(){
-			res.send('done')
+        const cacheFolder = require('../lib/cache').getCacheFolder();
+
+		fs.readdir(cacheFolder, function(err, files){
+            async.each(
+                files,
+                function(fileName, nextFile){
+                    const splitFile = fileName.split('.');
+                    if(splitFile[splitFile.length-1] === 'json'){
+                        fs.unlink(path.join(cacheFolder, fileName), nextFile);
+                    }
+                    else{
+                        nextFile()
+                    }
+                },
+                function(err){
+                    res.send();
+                }
+            );
 		});
     });
 

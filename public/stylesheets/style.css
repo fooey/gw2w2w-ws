@@ -27,9 +27,9 @@ body{
 	margin-bottom: 0;
 }
 
-.team.red{color: #b94a48 !important}
-.team.blue{color: #3a87ad !important}
-.team.green{color: #468847 !important}
+.team.red{color: #a94442 !important}
+.team.blue{color: #31708f !important}
+.team.green{color: #3c763d !important}
 .team.neutral{color: #999 !important; font-style: italic;}
 
 

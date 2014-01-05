@@ -6,7 +6,7 @@ const langs = require('../lib/anet').langs;
 
 
 module.exports = function (req, res) {
-    const renderStart = _.now();
+    const renderStart = Date.now();
 
 	// should reload from a resync broadcast, but this is a failsafe to force a reload after 20 seconds or so
     res.setHeader('Refresh', _.random(20,40));

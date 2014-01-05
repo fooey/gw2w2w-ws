@@ -4,21 +4,17 @@ const async = require('async');
 const _ = require('lodash');
 const humanize = require('humanize');
 
+const langs = require('../lib/anet.js').langs;
 
 
 module.exports = function (req, res) {
     const urlLang = req.params.lang || 'en';
-    const renderStart = _.now();
+    const renderStart = Date.now();
 
     if(!GLOBAL.dataReady){        
         require('./loading.js')(req, res);
     }
     else{
-
-        const langs = require('../lib/anet.js').langs;
-        const worldsController = require('../lib/worlds.js');
-        const matchesController = require('../lib/matches.js');
-        const matchDetailsController = require('../lib/matchDetails.js');
 
         async.parallel([
             getWorlds
@@ -28,72 +24,64 @@ module.exports = function (req, res) {
         , renderView);
 
 
+
         function getWorlds(getWorldsCallback){
-        	let worlds = [];
-            worldsController.asyncEach(
-            	urlLang,
-            	function(world, nextWorld){
-                    world.link = worldsController.getLink(urlLang, world.slug);
-                    worlds.push(world);
-                    nextWorld(null);
-                }
-                , function(err){
-                    getWorldsCallback(err, worlds);
-                }
-            );
+            require('../lib/worlds.js').getWorlds(getWorldsCallback)
         }
 
         function getMatches(getMatchesCallback){
-            matchesController.getMatches(function(err, matches){
-                getMatchesCallback(err, matches);
-            });
+            require('../lib/matches.js').getMatches(getMatchesCallback);
         }
 
         function getScores(getScoresCallback){
-            matchDetailsController.getScores(function(err, scores){
-                getScoresCallback(err, scores);
-            });
+            require('../lib/matchDetails.js').getScores(getScoresCallback);
         }
 
 
         function renderView(err, results){
             if(err){console.log('ERROR IN overview.renderView()', err)}
 
-            let allWorlds = results[0];
-            let allMatches = results[1];
+            let worlds = results[0];
+            let matches = results[1];
             let allScores = results[2];
 
-            async.concat(
-            	allMatches,
-            	function(match, next){
-	                match.redWorld = _.find(allWorlds, function(world){return world.id === match.redWorldId});
-	                match.greenWorld = _.find(allWorlds, function(world){return world.id === match.greenWorldId});
-	                match.blueWorld = _.find(allWorlds, function(world){return world.id === match.blueWorldId});
-	                match.scores = (_.isArray(allScores) && allScores[0].scores) ? _.find(allScores, function(matchScore){return matchScore.match_id === match.id}).scores : [0,0,0];
+            const worldLists = {
+                'US': _.pluck(_.sortBy(_.filter(worlds, {region: 'US'}), function(world){return world[urlLang].name}), 'id'),
+                'EU': _.pluck(_.sortBy(_.filter(worlds, {region: 'EU'}), function(world){return world.name}), 'id'),
+            }
+
+            const matchLists = {
+                'US': _.pluck(_.filter(matches, {region: 'US'}), 'id').sort(),
+                'EU': _.pluck(_.filter(matches, {region: 'EU'}), 'id').sort(),
+            }
+
+            const matchIds = Object.keys(matches);
+            async.each(
+            	matchIds,
+            	function(matchId, nextMatch){
+                    let match = matches[matchId]
+                    
+                    match.redWorld = worlds[match.redWorldId];
+                    match.greenWorld = worlds[match.greenWorldId];
+	                match.blueWorld = worlds[match.blueWorldId];
+	                match.scores = (allScores) ? allScores[match.id] : [0,0,0];
 	                match.scoresFormatted = _.map(match.scores, function(score) { return humanize.numberFormat(score, 0); });
 
-	                next(null, match);
+	                nextMatch(null);
 	            },
-	            function(err, mergedMatches){
-		            const worlds = {
-		                'US': _.filter(allWorlds, function(world){return world.region === 'US'}),
-		                'EU': _.filter(allWorlds, function(world){return world.region === 'EU'}),
-		            };
-
-		            const matches = {
-		                'US': _.filter(mergedMatches, function(match){return match.region === 'US'}),
-		                'EU': _.filter(mergedMatches, function(match){return match.region === 'EU'}),
-		            };
-
+	            function(err){
 
 		            res.render('overview', {
 		                title: 'GuildWars2 WvW Objectives Tracker',
 
 		                langs: langs,
-
 		                lang: urlLang,
-		                matches: matches,
+
 		                worlds: worlds,
+                        matches: matches,
+
+                        worldLists: worldLists,
+                        matchLists: matchLists,
 
 		                renderStart: renderStart,
 		            });
