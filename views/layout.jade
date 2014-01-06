@@ -5,8 +5,8 @@ html
 
 		meta(name="viewport", content="width=device-width, initial-scale=1.0")
 
-		link(href="/todc/css/bootstrap.min.css", rel="stylesheet")
-		link(href="/todc/css/todc-bootstrap.min.css", rel="stylesheet")
+		link(href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css", rel="stylesheet")
+		//- link(href="/stylesheets/bootplus.css", rel="stylesheet")
 		link(href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css", rel="stylesheet")
 		link(href="https://d1h9a8s8eodvjz.cloudfront.net/fonts/menomonia/08-02-12/menomonia.css", rel='stylesheet')
 		link(href="https://d1h9a8s8eodvjz.cloudfront.net/fonts/menomonia/08-02-12/menomonia-italic.css", rel='stylesheet')
@@ -16,7 +16,7 @@ html
 
 	body
 
-		nav#site-navbar.navbar.navbar-default.navbar-inverse(role='navigation')
+		nav#site-navbar.navbar.navbar-default(role='navigation')
 			.navbar-header
 				button.navbar-toggle(type='button', data-toggle='collapse', data-target='#navbar-collapse')
 					span.sr-only Toggle navigation
@@ -38,7 +38,10 @@ html
 					li.divider-vertical
 					if(langs)
 						each lang, langIndex in langs
-							li: a(href=lang.href, title=lang.name)= lang.label
+							-var liClass = [];
+							if urlLang == lang.key
+								-liClass.push('active')
+							li(class=liClass): a(href=lang.href, title=lang.name)= lang.label
 
 				ul.nav.navbar-nav
 					block worldLinks

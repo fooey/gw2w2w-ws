@@ -2,7 +2,28 @@ body{
 	font-family: menomonia;
 	font-size: 14px;
 	margin-bottom: 80px;
+	background-color:#fff;
 }
+
+.navbar-default{
+	margin-top: 0;
+}
+
+
+.row.row-gutterless{
+	margin: 0;
+}
+.row.row-gutterless [class^="col"],
+.row.row-gutterless [class*=" col"]{
+	padding: 0;
+}
+.row.row-gutterless > *:first-child{
+	padding-left: 0;
+}
+.row.row-gutterless > *:last-child{
+	padding-right: 0;
+}
+
 
 
 .strong{font-weight: bold;}
@@ -88,18 +109,6 @@ body{
 	margin: 0;
 	line-height: 120%;
 }
-.objectives .row{
-	margin: 0;
-}
-.map{
-	padding: 0 2px;
-}
-.map:first-child{
-	padding-left: 0;
-}
-.map:last-child{
-	padding-right: 0;
-}
 
 .map-name{
 	margin: 12px 0 4px 0;
@@ -108,32 +117,31 @@ body{
 	text-align: center;
 }
 
-div.objectives-group{
+.objectives .objectives-group{
 	padding: 2px 2px;
+	margin: 0 2px;
 }
-div.objectives-group + div.objectives-group{
+.objectives .objectives-group + .objectives-group{
 	margin-top: 4px;
 }
 
 
-li.objective {
+.objectives-group .objective {
 	font-size: 10pt;
 	line-height: 15px;
 	height: 15px;
 	padding-left: 2px;
 	margin: 3px 0;
 }
-li.objective span{
+.objectives-group .objective span{
 	height: 15px;
 	display: inline-block;
 	float: left;
 }
-li.objective span.sprite{
+.objectives-group .objective .sprite{
 	margin-right: 4px;
 }
-li.objective span.objective-name{
-}
-li.objective .timer{
+.objectives-group .objective .timer{
 	float: right;
 	display: inline-block;
 	width: 40px;

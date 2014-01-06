@@ -75,7 +75,7 @@ module.exports = function (req, res) {
 		                title: 'GuildWars2 WvW Objectives Tracker',
 
 		                langs: langs,
-		                lang: urlLang,
+		                urlLang: urlLang,
 
 		                worlds: worlds,
                         matches: matches,

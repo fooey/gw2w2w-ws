@@ -3,49 +3,76 @@ extends layout
 
 block content
 
-    #tracker
-        br
-        section.row.totalScores
-            each world, worldIndex in [match.redWorld, match.blueWorld, match.greenWorld]
-                -var team = ['red', 'blue', 'green'][worldIndex];
-                div.col-md-4: div(class="team-score well team " + team)
-                    h2.text-center= world[urlLang].name
-                    h3.score.text-center(data-score=matchDetails.scores[worldIndex])= matchDetails.scoresFormatted[worldIndex]
+	#tracker
+		br
+		section.row.totalScores
+			each world, worldIndex in [match.redWorld, match.blueWorld, match.greenWorld]
+				+writeWorldScore(world, worldIndex)
+
+			div.row.row-gutterless.objectives: div.col-md-12: div.row
+				-var mapNum = 0;
+				each objectiveGroup, objectiveGroupName in objectiveGroups
+					+witeObjectiveGroup(objectiveGroup, objectiveGroupName, mapNum++)
 
 
-            div.row.objectives: div.col-md-12: div.row
-                -var ixMap = 0;
-                each objectiveGroup, objectiveGroupName in objectiveGroups
-                    -var className = ['col-md-3', 'map'];
-                    section(class=className, title=objectiveGroupName, id="map-" + objectiveGroupName.toLowerCase())
-                        h4.map-name= matchDetails.mapNames[ixMap++]
-                        each section, sectionName in objectiveGroup
-                            -var className = [section.groupClass, 'objectives-group']
-                            div(class=className, title=sectionName)
-                                //h5= sectionName
-                                ul.list-unstyled
-                                    each objectiveId in section.objectives
-                                        -var objective = objectives[objectiveId];
-                                        -var state = objectiveState[objectiveId]
-                                        -var liClass = ['objective', 'team', state.owner.color.toLowerCase(), 'clearfix'];
-                                        li(id="objective-" + objectiveId, class=liClass, data-lastcaptured=state.owner.timestamp)
-                                            span(class=['sprite', state.owner.color.toLowerCase(), objective.type.type])
-                                            span.objective-name= objective.commonNames[urlLang]
-                                            if(state.guild.id)
-                                                span(class='guild-' + state.guild.id)
-                                            if(objective.type.timer)
-                                                span.timer
 
-   
+
+
 block worldLinks
-    each world, worldIndex in [match.redWorld, match.blueWorld, match.greenWorld]
-        -var team = ['red', 'blue', 'green'][worldIndex];
-        -var liClass = ['team', team];
-        if world.slug == urlSlug
-            -liClass.push('active')
-        li(class=liClass): a(class=['team', team], href=world.link)= world.name
+	each world, worldIndex in [match.redWorld, match.blueWorld, match.greenWorld]
+		-var team = ['red', 'blue', 'green'][worldIndex];
+		-var liClass = ['team', team];
+		-var aClass = ['team', team];
+		if world[urlLang].slug == urlSlug
+			-liClass.push('active')
+		li(class=liClass)
+			a(class=aClass, href=world.link)
+				= world[urlLang].name
 
 
-block bodyClose     
-    script.
-        $(function(){subscribeToUpdates('match#{match.id}');});
+block bodyClose
+	script.
+		$(function(){subscribeToUpdates('match#{match.id}');});
+		serverTimeOffset = #{Math.floor(Date.now() / 1000)} - Math.floor(Date.now() / 1000);
+		console.log('serverTimeOffset: ', serverTimeOffset)
+
+
+
+
+
+mixin writeWorldScore(world, worldIndex)
+	-var team = ['red', 'blue', 'green'][worldIndex];
+	-var scoreClass = ['team-score', 'well', 'team', team];
+	div.col-md-4: div(class=scoreClass)
+		h2.text-center= world[urlLang].name
+		h3.score.text-center(data-score=matchDetails.scores[worldIndex])= matchDetails.scoresFormatted[worldIndex]
+
+
+mixin witeObjectiveGroup(objectiveGroup, objectiveGroupName, mapNum)
+	-var className = ['col-md-3', 'map'];
+	section(class=className, title=objectiveGroupName, id="map-" + objectiveGroupName.toLowerCase())
+		h4.map-name= matchDetails.mapNames[mapNum]
+		each section, sectionName in objectiveGroup
+			+witeObjectiveSection(section, sectionName)
+
+
+mixin witeObjectiveSection (section, sectionName)
+	-var className = [section.groupClass, 'objectives-group']
+	div(class=className, title=sectionName)
+		//h5= sectionName
+		ul.list-unstyled
+			each objectiveId in section.objectives
+				+writeObjective(objectiveId)
+
+
+mixin writeObjective (objectiveId)
+	-var objective = objectives[objectiveId];
+	-var state = objectiveState[objectiveId]
+	-var liClass = ['objective', 'team', state.owner.color.toLowerCase(), 'clearfix'];
+	li(id="objective-" + objectiveId, class=liClass, data-lastcaptured=state.owner.timestamp)
+		span(class=['sprite', state.owner.color.toLowerCase(), objective.type.type])
+		span.objective-name= objective.commonNames[urlLang]
+		if(state.guild.id)
+			span(class='guild-' + state.guild.id)
+		if(objective.type.timer)
+			span.timer

@@ -41,7 +41,7 @@ mixin writeMatches(matchList)
 						-var team = ['red', 'blue', 'green'][worldIndex];
 						.world.row(id="world"+ world.id, class=['team', team])
 							.name.col-md-9.col-xs-9
-								a(href=world[lang].link, class=['team', team])= world[lang].name
+								a(href=world[urlLang].link, class=['team', team])= world[urlLang].name
 							.score.col-md-3.col-xs-3(data-score= match.scores[worldIndex])
 								= match.scoresFormatted[worldIndex]
 
@@ -65,4 +65,4 @@ mixin writeWorlds(worldList)
 	ul
 		each worldId in worldList
 			-var world = worlds[worldId]
-			li: a(href=world[lang].link)= world[lang].name
+			li: a(href=world[urlLang].link)= world[urlLang].name
