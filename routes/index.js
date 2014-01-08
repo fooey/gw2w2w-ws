@@ -35,7 +35,10 @@ module.exports = function(app, express){
                     }
                 },
                 function(err){
-                    res.send();
+                    res.send('done');
+                    
+                    console.log(Date.now(), 'Data NOT Ready, Broadcast DESYNC Event')
+                    GLOBAL.WebSocketServer.broadcastToChannel('global', {event: 'desync'});
                 }
             );
 		});
