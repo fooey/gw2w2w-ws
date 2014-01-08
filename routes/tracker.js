@@ -42,6 +42,7 @@ module.exports = function (req, res) {
 
             objectives: getObjectives,
             objectiveState: ['match', getObjectiveState],
+            journal: ['objectiveState', getJournal],
 
         }, function (err, results){
             //console.log(arguments);
@@ -66,6 +67,7 @@ module.exports = function (req, res) {
                     objectives: results.objectives,
                     objectiveState: results.objectiveState,
 
+                    journal: results.journal,
                 }
             );
         });
@@ -123,27 +125,35 @@ module.exports = function (req, res) {
     }
 
 
-    // function getObjectiveState(data, callback){
-    //     stateController.get({matchId: data.match.id}, function(err, history){
-    //         async.each(
-    //             history,
-    //             function(historyItem, next){
-    //                 let objective = data.objectives[historyItem.objectiveId];
-    //                 if(historyItem.eventType === 'newOwner'){
-    //                     objective.lastCaptured = historyItem.timestamp;
-    //                     objective.owner = historyItem.owner;
-    //                 }
-    //                 else if(historyItem.eventType === 'newClaimer'){
-    //                     objective.guildId = historyItem.guildId;
-    //                 }
-    //                 next(null);
-    //             },
-    //             function(err){
-    //                 data.history = history;
-    //                 callback(err, data);
-    //             }
-    //         );
+    function getJournal (getJournalCallback, data){
+        let journal = [];
+        async.each(
+            Object.keys(data.objectiveState),
+            function(objectiveId, next){
+                const objective = data.objectiveState[objectiveId];
+                if(objective.owner && objective.owner.timestamp){
+                    journal.push({
+                        timestamp: objective.owner.timestamp,
+                        id: objectiveId,
+                        type: 'owner',
+                        color: objective.owner.color
+                    });
+                }
+                if(objective.guild && objective.guild.timestamp){
+                    journal.push({
+                        timestamp: objective.guild.timestamp,
+                        id: objectiveId,
+                        type: 'claimer',
+                        guildId: objective.guild.id
+                    });
+                }
 
-    //     });
-    // }
+                next(null);
+            },
+            function(err){
+                journal = _.sortBy(journal, function(entry){ return entry.timestamp; }).reverse()
+                getJournalCallback(null, journal);
+            }
+        );
+    }
 };

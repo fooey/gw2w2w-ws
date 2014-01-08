@@ -9,10 +9,21 @@ block content
 			each world, worldIndex in [match.redWorld, match.blueWorld, match.greenWorld]
 				+writeWorldScore(world, worldIndex)
 
-			div.row.row-gutterless.objectives: div.col-md-12: div.row
-				-var mapNum = 0;
-				each objectiveGroup, objectiveGroupName in objectiveGroups
-					+witeObjectiveGroup(objectiveGroup, objectiveGroupName, mapNum++)
+		section.row: div.col-md-12: div.row.row-gutterless.objectives
+			-var mapNum = 0;
+			each objectiveGroup, objectiveGroupName in objectiveGroups
+				+witeObjectiveGroup(objectiveGroup, objectiveGroupName, mapNum++)
+
+		br
+		br
+
+		section.row
+			.col-md-4
+				.well
+					| options!
+			.col-md-8
+				.well
+					+writeLog()
 
 
 
@@ -34,12 +45,12 @@ block bodyClose
 	script.
 		$(function(){subscribeToUpdates('match#{match.id}');});
 		serverTimeOffset = #{Math.floor(Date.now() / 1000)} - Math.floor(Date.now() / 1000);
-		console.log('serverTimeOffset: ', serverTimeOffset)
+		objectiveState = !{JSON.stringify(objectiveState)};
 
 
 
 
-
+// scoreboard
 mixin writeWorldScore(world, worldIndex)
 	-var team = ['red', 'blue', 'green'][worldIndex];
 	-var scoreClass = ['team-score', 'well', 'team', team];
@@ -48,6 +59,7 @@ mixin writeWorldScore(world, worldIndex)
 		h3.score.text-center(data-score=matchDetails.scores[worldIndex])= matchDetails.scoresFormatted[worldIndex]
 
 
+// objectives
 mixin witeObjectiveGroup(objectiveGroup, objectiveGroupName, mapNum)
 	-var className = ['col-md-3', 'map'];
 	section(class=className, title=objectiveGroupName, id="map-" + objectiveGroupName.toLowerCase())
@@ -76,3 +88,11 @@ mixin writeObjective (objectiveId)
 			span(class='guild-' + state.guild.id)
 		if(objective.type.timer)
 			span.timer
+
+
+
+mixin writeLog
+	ul.list-unstyled
+		each entry in journal
+			li= JSON.stringify(entry)
+
