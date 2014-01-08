@@ -2,9 +2,6 @@
 
 const async = require('async');
 const _ = require('lodash');
-const humanize = require('humanize');
-
-const langs = require('../lib/anet.js').langs;
 
 
 module.exports = function (req, res) {
@@ -16,79 +13,101 @@ module.exports = function (req, res) {
     }
     else{
 
-        async.parallel([
-            getWorlds
-            , getMatches
-            , getScores
-        ]
-        , renderView);
-
-
-
-        function getWorlds(getWorldsCallback){
-            require('../lib/worlds.js').getWorlds(getWorldsCallback)
+        async.auto({
+            worlds: getWorlds,
+            scores: getScores,
+            matches: ['worlds', 'scores', getMatches],
+            worldLists: ['worlds', buildWorldLists],
+            matchLists: ['matches', buildMatchLists],
         }
-
-        function getMatches(getMatchesCallback){
-            require('../lib/matches.js').getMatches(getMatchesCallback);
-        }
-
-        function getScores(getScoresCallback){
-            require('../lib/matchDetails.js').getScores(getScoresCallback);
-        }
-
-
-        function renderView(err, results){
+        , function (err, results){
             if(err){console.log('ERROR IN overview.renderView()', err)}
 
-            let worlds = results[0];
-            let matches = results[1];
-            let allScores = results[2];
+            res.render('overview', {
+                title: 'GuildWars2 WvW Objectives Tracker',
 
-            const worldLists = {
-                'US': _.pluck(_.sortBy(_.filter(worlds, {region: 'US'}), function(world){return world[urlLang].name}), 'id'),
-                'EU': _.pluck(_.sortBy(_.filter(worlds, {region: 'EU'}), function(world){return world.name}), 'id'),
-            }
+                langs: require('../lib/anet.js').langs,
+                urlLang: urlLang,
 
-            const matchLists = {
-                'US': _.pluck(_.filter(matches, {region: 'US'}), 'id').sort(),
-                'EU': _.pluck(_.filter(matches, {region: 'EU'}), 'id').sort(),
-            }
+                worlds: results.worlds,
+                matches: results.matches,
 
-            const matchIds = Object.keys(matches);
-            async.each(
-            	matchIds,
-            	function(matchId, nextMatch){
-                    let match = matches[matchId]
-                    
-                    match.redWorld = worlds[match.redWorldId];
-                    match.greenWorld = worlds[match.greenWorldId];
-	                match.blueWorld = worlds[match.blueWorldId];
-	                match.scores = (allScores) ? allScores[match.id] : [0,0,0];
-	                match.scoresFormatted = _.map(match.scores, function(score) { return humanize.numberFormat(score, 0); });
+                worldLists: results.worldLists,
+                matchLists: results.matchLists,
 
-	                nextMatch(null);
-	            },
-	            function(err){
+                renderStart: renderStart,
+            });
+        });
 
-		            res.render('overview', {
-		                title: 'GuildWars2 WvW Objectives Tracker',
 
-		                langs: langs,
-		                urlLang: urlLang,
 
-		                worlds: worlds,
-                        matches: matches,
+        /*
+        *   ASYNC.AUTO METHODS
+        */
 
-                        worldLists: worldLists,
-                        matchLists: matchLists,
-
-		                renderStart: renderStart,
-		            });
-	            }
-	        );
+        function getWorlds(autoCallback){
+            require('../lib/worlds.js').getWorlds(autoCallback)
         }
 
+
+        function getScores(autoCallback){
+            require('../lib/matchDetails.js').getScores(autoCallback);
+        }
+
+
+        function getMatches(autoCallback, autoData){
+            const humanize = require('humanize');
+
+            require('../lib/matches.js').getMatches(function(err, matches){
+                async.each(
+                    Object.keys(matches),
+                    function(matchId, nextMatch){
+                        let match = matches[matchId];
+                        
+                        match.redWorld = autoData.worlds[match.redWorldId];
+                        match.greenWorld = autoData.worlds[match.greenWorldId];
+                        match.blueWorld = autoData.worlds[match.blueWorldId];
+                        match.scores = (autoData.scores) ? autoData.scores[match.id] : [0,0,0];
+                        match.scoresFormatted = _.map(match.scores, function(score) { return humanize.numberFormat(score, 0); });
+
+                        nextMatch(null);
+                    },
+                    function(err){
+                        autoCallback(null, matches);
+                    }
+                );
+            });
+        }
+
+
+        function buildWorldLists(autoCallback, autoData){
+            autoCallback(null, {
+                'US': getSortedWorldsByRegion('US', autoData.worlds),
+                'EU': getSortedWorldsByRegion('EU', autoData.worlds),
+            });
+        }
+
+
+        function buildMatchLists(autoCallback, autoData){
+            autoCallback(null, {
+                'US': getSortedMatchesByRegion('US', autoData.matches),
+                'EU': getSortedMatchesByRegion('EU', autoData.matches),
+            });
+        }
+        
+
+
+        /*
+        *   UTIL METHODS
+        */
+
+        function getSortedWorldsByRegion(region, worlds){
+            return _.pluck(_.sortBy(_.filter(worlds, {region: region}), function(world){return world[urlLang].name}), 'id');
+        }
+
+        function getSortedMatchesByRegion(region, matches){
+            return _.pluck(_.filter(matches, {region: region}), 'id').sort();
+        }
 
     }
 };
