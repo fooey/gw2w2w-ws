@@ -22,8 +22,12 @@ block content
 
 
 block bodyClose
+	script(src="//www.google.com/jsapi")
 	script.
+		google.load('visualization', '1', {packages: ['corechart']});
 		$(function(){subscribeToUpdates('overview')});
+		serverTimeOffset = #{Math.floor(Date.now() / 1000)} - Math.floor(Date.now() / 1000);
+
 
 
 
@@ -35,7 +39,7 @@ mixin writeMatches(matchList)
 			-matchNum++;
 			-match = matches[matchId]
 			//-tr: td(colspan=3)= match.getId()
-			.match.row(id="match"+ matchId)
+			.match.row(id="match"+ matchId, data-matchid=matchId)
 				.worlds.col-md-9.col-xs-9
 					each world, worldIndex in [match.redWorld, match.blueWorld, match.greenWorld]
 						-var team = ['red', 'blue', 'green'][worldIndex];
@@ -45,8 +49,9 @@ mixin writeMatches(matchList)
 							.score.col-md-3.col-xs-3(data-score= match.scores[worldIndex])
 								= match.scoresFormatted[worldIndex]
 
-				.col-md-3.col-xs-3.pie
-					canvas(width="90", height="90")
+				.col-md-3.col-xs-3
+					.pie(id="pie"+ matchId)
+					//- canvas(width="90", height="90")
 			//-
 				each world, worldIndex in [match.redWorld, match.blueWorld, match.greenWorld]
 					-var team = ['red', 'blue', 'green'][worldIndex];

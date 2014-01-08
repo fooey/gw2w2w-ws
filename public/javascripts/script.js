@@ -20,7 +20,7 @@ $(function(){
     if($tracker.length){
         updateTimers()
         setInterval(updateTimers, 1000);
-    }
+    };
 });
 
 
@@ -33,26 +33,42 @@ $(function(){
 *
 */
 
-
+var chartOptions = {
+    width: 90,
+    height: 90,
+    chartArea: {width: '100%', height: '100%'},
+    colors: ['#a94442', '#31708f', '#3c763d'],
+    enableInteractivity: false,
+    pieSliceText: 'none',
+    legend: {position: 'none'},
+    tooltip: {textStyle: {
+        fontSize: '9'
+    }}
+};
 var drawPie = function($pie){
     var $match = $pie.closest('.match');
-    var redScore = $match.find('.world.red .score').data('score') || 0;
-    var blueScore = $match.find('.world.blue .score').data('score') || 0;
-    var greenScore = $match.find('.world.green .score').data('score') || 0;
+    var matchId = $match.data('matchid');
 
-    var data = [{
-        value: redScore,
-        color:"#a94442"
-    },{
-        value : blueScore,
-        color : "#31708f"
-    },{
-        value : greenScore,
-        color : "#3c763d"
-    }];
+    var $red = $match.find('.world.red');
+    var redTeam = $red.find('a').text();
+    var redScore = $red.find('.score').data('score') || 0;
 
-    var ctx = $pie.find('canvas').get(0).getContext("2d");
-    var myNewChart = new Chart(ctx).Pie(data, {animation: false, });
+    var $blue = $match.find('.world.blue');
+    var blueTeam = $blue.find('a').text();
+    var blueScore = $blue.find('.score').data('score') || 0;
+
+    var $green = $match.find('.world.green');
+    var greenTeam = $green.find('a').text();
+    var greenScore = $green.find('.score').data('score') || 0;
+
+    var chartData = google.visualization.arrayToDataTable([
+        ['Team', 'Score'],
+        [redTeam, redScore],
+        [blueTeam, blueScore],
+        [greenTeam, greenScore],
+    ]);
+
+    new google.visualization.PieChart(document.getElementById('pie'+matchId)).draw(chartData, chartOptions);
 }
 
 
@@ -100,6 +116,8 @@ var subscribeToUpdates = function (channel) {
     var wsHost = ['ws://', window.location.hostname, ':', window.location.port].join('');
     var wsClient = new WebSocket(wsHost);
 
+    console.log('Subscribing to channel', channel)
+
     wsClient.onopen = function () {
         var packet = { event: 'subscribe', channel: channel };
         console.log('WS Send:', packet);
@@ -123,19 +141,28 @@ var subscribeToUpdates = function (channel) {
         }
 
         _.forEach(packets, function(packet, index){
-            switch(channel){
-                case 'global':
-                case 'loading':
-                    globalEvents(packet);
-                    break;
 
-                case 'overview':
-                    overviewEvents(packet);
-                    break;
+            if(packet.event && (
+                packet.event === 'resync'
+                || packet.event === 'desync'
+            )){
+                globalEvents(packet);
+            }
+            else{
+                switch(channel){
+                    case 'global':
+                    case 'loading':
+                        globalEvents(packet);
+                        break;
 
-                default:
-                    trackerEvents(packet);
-                    break;
+                    case 'overview':
+                        overviewEvents(packet);
+                        break;
+
+                    default:
+                        trackerEvents(packet);
+                        break;
+                }
             }
         })
 
@@ -145,6 +172,7 @@ var subscribeToUpdates = function (channel) {
 
 
 function globalEvents(message){
+    console.log('WS Global:', message)
     if (message.event){
         switch(message.event){
             case 'desync':
