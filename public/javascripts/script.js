@@ -1,8 +1,12 @@
+/*!
+*
+*   APP
+*
+*/
 
-/*
-*
+
+/*!
 *   ONLOAD and BEHAVIORS
-*
 */
 
 var $overview, $tracker;
@@ -21,16 +25,22 @@ $(function(){
         updateTimers()
         setInterval(updateTimers, 1000);
     };
+
+
+    $log = $('#log');
+    if($log.length){
+        initLog($log);
+    };
+
+
 });
 
 
 
 
 
-/*
-*
+/*!
 *   OVERVIEW
-*
 */
 
 var chartOptions = {
@@ -75,10 +85,8 @@ var drawPie = function($pie){
 
 
 
-/*
-*
+/*!
 *   TRACKER
-*
 */
 
 var buffTimer = 5*60;
@@ -99,18 +107,81 @@ var updateTimers = function updateTimers(){
         }
 
         //console.log(lastCaptured)
-    })
+    });
+
+    $('#logEntries .logEntry').each(function(i){
+        var $that = $(this);
+        var timestamp = $that.data('timestamp');
+        var dateObj = new Date(timestamp*1000);
+        var timeText = dateFormat(dateObj, 'hh:mm:ss');
+        $that.find('.timestamp').html(timeText);
+    });
 };
 
 
 
 
 
+/*!
+*   LOG
+*/
 
-/*
-*
+function initLog($log){
+    console.log('initLog()');
+
+    $log.find('.logEntry')
+        .on('mouseenter', function(){
+            var $that = $(this);
+            var objectiveId = $that.data('objectiveid');
+            var $objective = $('#objective-' + objectiveId);
+            $objective.addClass('active');
+        })
+        .on('mouseout', function(){
+            var $that = $(this);
+            var objectiveId = $that.data('objectiveid');
+            var $objective = $('#objective-' + objectiveId);
+            $objective.removeClass('active');
+        });
+
+    $log.find('#logtabs a')
+        .on('click', function(){
+            var $that = $(this);
+            var mapName = $that.data('mapname');
+
+            $that.closest('li')
+                .addClass('active')
+                .siblings()
+                    .removeClass('active');
+
+            if(mapName === 'All'){
+                $log
+                    .find('.mapName:hidden')
+                        .show()
+                    .end()
+                    .find('.logEntry:hidden')
+                        .show()
+                    .end();
+            }
+            else{
+                $log
+                    .find('.mapName:visible')
+                        .hide()
+                    .end()
+                    .find('.logEntry:visible')
+                        .hide()
+                    .end()
+                    .find('.logEntry.' + mapName)
+                        .show()
+                    .end();
+            }
+        });
+}
+
+
+
+
+/*!
 *   WEB SOCKET EVENTS
-*
 */
 var subscribeToUpdates = function (channel) {
     var wsHost = ['ws://', window.location.hostname, ':', window.location.port].join('');
@@ -247,9 +318,7 @@ function trackerEvents(message){
 
 
 /*
-*
 *   UTILITY
-*
 */
 
 var waitingForReload = false;
@@ -258,96 +327,3 @@ var $alertDiv;
 $(function(){
      $('<div id="priorityAlert" class="alert alert-danger" style="margin: 1em 0; padding: 1em; text-align: center; vertical-align: middle;"><h1>Application has requested a page reload</h1></div>').hide().prependTo('#content')
 });
-
-
-function reload(ms){
-    // possible for multiple WS messages to trigger reloads, only allow one
-    if(!waitingForReload){
-        waitingForReload = true;
-        console.log('Reloading in %d ms', ms);
-
-       
-        $('#priorityAlert').slideDown('fast');
-
-        setTimeout(function(){
-
-            $('#priorityAlert')
-                .find('h3')
-                    .fadeOut('fast', function(){
-                        $(this).remove();
-                    });
-
-            $.ajax({
-                url: window.location,
-                type: 'head',
-                timeout: (3*1000)
-            }).done(function(data, textStatus, jqXHR){
-                window.location.reload()
-            }).fail(function(data, textStatus, jqXHR){
-                console.log('*********************************');
-                console.log(' App not ready, requeuing reload ');
-                console.log('*********************************');
-
-                $('#priorityAlert')
-                    .css({minHeight: '160px'})
-                    .append(
-                         $('<h3>Application unavailable, requeuing page reload...</h3>')
-                            .hide()
-                            .fadeIn('fast')
-                    );
-
-                waitingForReload = false;
-                reloadDelayed(4000, 8000);
-            });
-        }, ms);
-    }
-}
-function reloadDelayed(msMin, msMax){
-    if(msMin && !msMax){
-        msMax = msMin;
-    }
-    else if(!msMin && !msMax){
-        msMax = msMax || 1*1000;
-        msMin = msMin || 3*1000;
-    }
-    var ms = ms || randRange(msMin, msMax);
-    reload(ms);
-}
-function reloadNow(){
-    reload(0);
-}
-
-
-function isJSON(data) {
-    var isJson = false
-    try {
-        // this works with JSON string and JSON object, not sure about others
-       var json = $.parseJSON(data);
-       isJson = typeof json === 'object' ;
-    } catch (ex) {}
-    return isJson;
-}
-
-
-function minuteFormat(seconds){
-    var minutes = Math.floor(seconds / 60);
-    seconds -= (minutes * 60);
-    
-    seconds = ('00' + seconds);
-    seconds = seconds.substring(seconds.length-2, seconds.length);
-    
-    var txt = minutes + ':' +  seconds;
-    
-    return txt;
-}
-
-function randRange(rangeMin, rangeMax) {
-    var randInRange = Math.round(
-        (
-            Math.random()
-            * (rangeMax - rangeMin)
-        )
-        + rangeMin
-    );
-    return randInRange;
-}

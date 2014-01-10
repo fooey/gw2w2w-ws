@@ -1,4 +1,4 @@
-doctype 5
+doctype html
 html
 	head
 		title= title
@@ -14,7 +14,6 @@ html
 		block headClose
 
 	body
-
 		nav#site-navbar.navbar.navbar-default(role='navigation')
 			.navbar-header
 				button.navbar-toggle(type='button', data-toggle='collapse', data-target='#navbar-collapse')
@@ -49,7 +48,7 @@ html
 
 
 
-		#content.container
+		#content
 			block content
 
 
@@ -80,10 +79,17 @@ html
 		script(src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js")
 		script(src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js")
 		script(src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js")
-		script(src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js")
+		script(src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js")
+		script(src="//cdnjs.cloudflare.com/ajax/libs/async/0.2.7/async.min.js")
 		script(src="//netdna.bootstrapcdn.com/bootstrap/3.0.2/js/bootstrap.min.js")
 		script(src="/javascripts/humanize.min.js")
-		script(src="/javascripts/script.js")
+
+		script(src="/data/worlds.js")
+		script(src="/data/objectives.js")
+		script(src="/data/objectiveTypes.js")
+
+		script(src="/javascripts/script.min.js")
+
 
 
 		block bodyClose

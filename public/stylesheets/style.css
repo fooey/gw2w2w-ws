@@ -133,6 +133,9 @@ body{
 	padding-left: 2px;
 	margin: 3px 0;
 }
+.objectives-group .objective.active {
+	background-color: #ff0;
+}
 .objectives-group .objective span{
 	height: 15px;
 	display: inline-block;
@@ -158,6 +161,44 @@ body{
 	border-radius: 4px;
 }
 
+
+
+#log{
+	padding: 8px 4px;
+}
+#logtabs a{
+	padding: .5em .75em;
+	cursor: pointer;
+}
+
+#logEntries{
+	max-height: 400px;
+	overflow: auto;
+}
+#logEntries table{
+	width: 100%;
+}
+#logEntries tr,
+#logEntries th,
+#logEntries td{
+	margin: 0;
+	padding: 0;
+	white-space: nowrap;
+}
+#logEntries th,
+#logEntries td{
+	padding: 2px .5em;
+	font-size: 10pt;
+	line-height: 15px;
+	border-bottom: 1px solid #eee;
+}
+
+#logEntries tr.alt > *{
+	background-color: #f9f9f9;
+}
+#logEntries tr:hover > *{
+	background-color: #ffffee;
+}
 
 
 

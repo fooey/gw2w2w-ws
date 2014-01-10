@@ -11,7 +11,6 @@ const objectivesController = require('../lib/objectives');
 const stateController = require('../lib/objectiveState');
 
 const objectiveGroups = require('../lib/objectiveGroups');
-    
 
 
 module.exports = function (req, res) {
@@ -23,26 +22,16 @@ module.exports = function (req, res) {
         require('./loading')(req, res);
     }
     else{
-        // async.waterfall([
-        //     getWorld,
-        //     getMatch,
-        //     getMatchDetails,
-        //     getObjectives,
-        //     getObjectiveState,
-        // ],function(err, results){
-        //     //console.log('err', err)
-        //     //console.log('results', results)
-
-        // });
 
         async.auto({
             world: getWorld,
             match: ['world', getMatch],
             matchDetails: ['match', getMatchDetails],
 
-            objectives: getObjectives,
+            objectiveTypes: getObjectiveTypes,
+            objectives: ['objectiveTypes', getObjectives],
             objectiveState: ['match', getObjectiveState],
-            journal: ['objectiveState', getJournal],
+            journal: ['objectives', 'objectiveState', getJournal],
 
         }, function (err, results){
             //console.log(arguments);
@@ -53,18 +42,20 @@ module.exports = function (req, res) {
                 'tracker'
                 , {
                     title: title,
+                    humanize: humanize,
 
                     renderStart: renderStart,
                     urlLang: urlLang,
                     urlSlug: urlSlug,
 
                     langs: require('../lib/anet').langs,
-                    objectiveGroups: objectiveGroups,
+                    objectiveGroups: objectiveGroups.getByMap(),
 
                     world: results.world,
                     match: results.match,
                     matchDetails: results.matchDetails,
                     objectives: results.objectives,
+                    objectiveTypes: results.objectiveTypes,
                     objectiveState: results.objectiveState,
 
                     journal: results.journal,
@@ -120,6 +111,11 @@ module.exports = function (req, res) {
     }
 
 
+    function getObjectiveTypes (getObjectivesCallback){
+        getObjectivesCallback(null, require('../lib/objectiveTypes').objectiveTypes);
+    }
+
+
     function getObjectiveState (getObjectiveStateCallback, data){
         stateController.getById(data.match.id, getObjectiveStateCallback);
     }
@@ -127,25 +123,37 @@ module.exports = function (req, res) {
 
     function getJournal (getJournalCallback, data){
         let journal = [];
+        const objectiveMaps = objectiveGroups.getByObjective()
+
+
         async.each(
             Object.keys(data.objectiveState),
             function(objectiveId, next){
-                const objective = data.objectiveState[objectiveId];
-                if(objective.owner && objective.owner.timestamp){
-                    journal.push({
-                        timestamp: objective.owner.timestamp,
-                        id: objectiveId,
-                        type: 'owner',
-                        color: objective.owner.color
-                    });
-                }
-                if(objective.guild && objective.guild.timestamp){
-                    journal.push({
-                        timestamp: objective.guild.timestamp,
-                        id: objectiveId,
-                        type: 'claimer',
-                        guildId: objective.guild.id
-                    });
+                const objective = data.objectives[objectiveId];
+                const objectiveType = data.objectiveTypes[objective.type];
+                const objectiveEvent = data.objectiveState[objectiveId];
+                const mapName = objectiveMaps[objectiveId].mapName;
+
+                if(objectiveType.value > 0){
+                    if(objectiveEvent.owner && objectiveEvent.owner.timestamp){
+                        journal.push({
+                            objective: objective,
+                            color: objectiveEvent.owner.color,
+                            mapName: mapName,
+                            timestamp: objectiveEvent.owner.timestamp,
+                            type: 'owner',
+                        });
+                    }
+                    if(objectiveEvent.guild && objectiveEvent.guild.timestamp){
+                        journal.push({
+                            objective: objective,
+                            color: objectiveEvent.owner.color,
+                            mapName: mapName,
+                            timestamp: objectiveEvent.guild.timestamp,
+                            type: 'claimer',
+                            guildId: objectiveEvent.guild.id
+                        });
+                    }
                 }
 
                 next(null);

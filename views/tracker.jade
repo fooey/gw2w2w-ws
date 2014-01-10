@@ -2,28 +2,27 @@ extends layout
 
 
 block content
-
 	#tracker
-		br
-		section.row.totalScores
-			each world, worldIndex in [match.redWorld, match.blueWorld, match.greenWorld]
-				+writeWorldScore(world, worldIndex)
+		.container
+			section.row.totalScores
+				each world, worldIndex in [match.redWorld, match.blueWorld, match.greenWorld]
+					+writeWorldScore(world, worldIndex)
 
-		section.row: div.col-md-12: div.row.row-gutterless.objectives
-			-var mapNum = 0;
-			each objectiveGroup, objectiveGroupName in objectiveGroups
-				+witeObjectiveGroup(objectiveGroup, objectiveGroupName, mapNum++)
-
-		br
-		br
-
-		section.row
-			.col-md-4
-				.well
-					| options!
-			.col-md-8
-				.well
-					+writeLog()
+		.container
+			section.row: div.col-md-12: div.row.row-gutterless.objectives
+				-var mapNum = 0;
+				div.col-md-3
+					+witeObjectiveGroup('Center', mapNum++)
+				div.col-md-9
+					div.row.row-gutterless
+						div.col-md-4
+							+witeObjectiveGroup('RedHome', mapNum++)
+						div.col-md-4
+							+witeObjectiveGroup('BlueHome', mapNum++)
+						div.col-md-4
+							+witeObjectiveGroup('GreenHome', mapNum++)
+					div.row.row-gutterless: div.col-md-12
+						+writeLog()
 
 
 
@@ -45,7 +44,7 @@ block bodyClose
 	script.
 		$(function(){subscribeToUpdates('match#{match.id}');});
 		serverTimeOffset = #{Math.floor(Date.now() / 1000)} - Math.floor(Date.now() / 1000);
-		objectiveState = !{JSON.stringify(objectiveState)};
+	script(src="/data/state-" + match.id + ".js")
 
 
 
@@ -59,9 +58,10 @@ mixin writeWorldScore(world, worldIndex)
 		h3.score.text-center(data-score=matchDetails.scores[worldIndex])= matchDetails.scoresFormatted[worldIndex]
 
 
-// objectives
-mixin witeObjectiveGroup(objectiveGroup, objectiveGroupName, mapNum)
-	-var className = ['col-md-3', 'map'];
+// objectives tracker
+mixin witeObjectiveGroup(objectiveGroupName, mapNum)
+	-var objectiveGroup = objectiveGroups[objectiveGroupName];
+	-var className = ['map'];
 	section(class=className, title=objectiveGroupName, id="map-" + objectiveGroupName.toLowerCase())
 		h4.map-name= matchDetails.mapNames[mapNum]
 		each section, sectionName in objectiveGroup
@@ -71,7 +71,7 @@ mixin witeObjectiveGroup(objectiveGroup, objectiveGroupName, mapNum)
 mixin witeObjectiveSection (section, sectionName)
 	-var className = [section.groupClass, 'objectives-group']
 	div(class=className, title=sectionName)
-		//h5= sectionName
+		//-h5= sectionName
 		ul.list-unstyled
 			each objectiveId in section.objectives
 				+writeObjective(objectiveId)
@@ -79,20 +79,45 @@ mixin witeObjectiveSection (section, sectionName)
 
 mixin writeObjective (objectiveId)
 	-var objective = objectives[objectiveId];
-	-var state = objectiveState[objectiveId]
+	-var state = objectiveState[objectiveId];
+	-var objectiveType = objectiveTypes[objective.type];
 	-var liClass = ['objective', 'team', state.owner.color.toLowerCase(), 'clearfix'];
 	li(id="objective-" + objectiveId, class=liClass, data-lastcaptured=state.owner.timestamp)
-		span(class=['sprite', state.owner.color.toLowerCase(), objective.type.type])
+		span(class=['sprite', state.owner.color.toLowerCase(), objectiveType.type])
 		span.objective-name= objective.commonNames[urlLang]
 		if(state.guild.id)
 			span(class='guild-' + state.guild.id)
-		if(objective.type.timer)
+		if(objectiveType.timer)
 			span.timer
 
 
 
+// log
 mixin writeLog
-	ul.list-unstyled
-		each entry in journal
-			li= JSON.stringify(entry)
+	section#log
+		+writeLogTabs()
+		#logEntries: table
+			each entry, ixEntry in journal
+				+writeLogEntry(entry, ixEntry)
+
+mixin writeLogTabs
+	ul#logtabs.nav.nav-tabs.small
+		li.active: a(data-mapname='All')= "All Maps"
+		each map, mapIndex in matchDetails.mapNames
+			-var mapName = ['Center', 'RedHome', 'BlueHome', 'GreenHome'][mapIndex]
+			li: a(data-mapname=mapName)= map
+
+mixin writeLogEntry(entry, ixEntry)
+	-var color = ((entry.color) ? entry.color : objectiveState[entry.objective.id].owner.color).toLowerCase();
+	-var objectiveType = objectiveTypes[entry.objective.type];
+	tr(class=['logEntry', 'team', color, entry.mapName, (ixEntry % 2) ? 'alt' : ''], data-timestamp=entry.timestamp, data-mapname=entry.mapName, data-objectiveid=entry.objective.id)
+		td.timestamp
+		td.mapName= entry.mapName
+		td: span(class=['sprite', color.toLowerCase(), objectiveType.type])
+		td= entry.objective.commonNames[urlLang]
+		td(width="100%")
+			if(entry.type === 'owner')
+				= entry.color
+			if(entry.type === 'claimer')
+				= entry.guildId
 
