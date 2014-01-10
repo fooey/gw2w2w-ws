@@ -32,7 +32,10 @@ GLOBAL.WebSocketServer.setServer(wss);
 GLOBAL.WebSocketServer.start();
 
 
-require('./lib/dataUpdater').startUpdater();
+require('./lib/cache').deleteCacheFiles('tmp',
+	require('./lib/dataUpdater').startUpdater()
+);
+
 
 
 //	start the http server listener
