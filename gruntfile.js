@@ -1,14 +1,24 @@
 module.exports = function(grunt) {
 
+	grunt.loadNpmTasks('grunt-concurrent');
 	grunt.loadNpmTasks('grunt-nodemon');
-	//grunt.loadNpmTasks('grunt-contrib-concat');
-	// grunt.loadNpmTasks('grunt-contrib-uglify');
-	// grunt.loadNpmTasks('grunt-contrib-cssmin');
+	grunt.loadNpmTasks('grunt-contrib-watch');
+	grunt.loadNpmTasks('grunt-contrib-uglify');
+	grunt.loadNpmTasks('grunt-contrib-cssmin');
 
 
 	// Project configuration.
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('package.json'),
+
+		concurrent: {
+			target: {
+				tasks: ['nodemon', 'watch'],
+				options: {
+					logConcurrentOutput: true
+				}
+			}
+		},
 
 		nodemon: {
 			dev: {
@@ -16,6 +26,7 @@ module.exports = function(grunt) {
 					file: 'server.js',
 					nodeArgs: ['--harmony'],
 					watchedExtensions: ['js', 'jade', 'json'],
+					delayTime: 1,
 					env: {
 						PORT: '3000',
 						NODE_ENV: 'development'
@@ -24,67 +35,61 @@ module.exports = function(grunt) {
 			}
 		},
 
-		// cssmin: {
-		// 	css: {
-		// 		files: {
-		// 			'public/prod/styles.min.css': [
-		// 				'public/css/menomonia.css',
-		// 				'public/css/menomonia-italic.css',
-		// 				'public/css/bootstrap.min.css',
-		// 				'public/plugins/jquery.pnotify.default.css',
-		// 				'bower_components/font-awesome/css/font-awesome.min.css',
-		// 				'public/css/custom.css',
-		// 			]
-		// 		}
-		// 	},
-		// },
+		watch: {
+			css: {
+				//files: 'public/stylesheets/*.css',
+				files: 'public/stylesheets/style.css',
+				tasks: ['cssmin'],
+				options: {
+					livereload: true, 
+					interval: 500,
+					debounceDelay: 500,
+				},
+			},
+			js: {
+				files: [
+					'public/javascripts/script.js',
+					'public/javascripts/lib.js'
+				],
+				tasks: ['uglify'],
+				options: {
+					livereload: true,
+					interval: 500,
+					debounceDelay: 500,
+				},
+			},
+		},
 
-		// uglify: {
-		// 	options: {
-		// 		stripBanners: false,
-		// 		banner: '/*! grunt-uglify <%= pkg.name %> - v<%= pkg.version %> - ' + '<%= grunt.template.today("yyyy-mm-dd") %> */\n\n',
-		// 		mangle: true,
-		// 		preserveComments: 'some',
-		// 	},
-		// 	libs: {
-		// 		files: {
-		// 			'public/prod/libs.min.js': [
-		// 				'bower_components/jquery/jquery.min.js',
-		// 				'bower_components/bootstrap-css/js/bootstrap.min.js',
-		// 				'bower_components/lodash/dist/lodash.min.js',
-		// 				'bower_components/raphael/raphael-min.js',
-		// 			]
-		// 		}
-		// 	},
-		// 	plugins: {
-		// 		files:{
-		// 			'public/prod/plugins.min.js': [
-		// 				'public/plugins/jquery.color.min.js',
-		// 				'public/plugins/underscore.string.min.js',
-		// 				'public/plugins/xregexp-all-min.js',
-		// 				'public/plugins/jquery.pnotify.min.js',
-		// 				'public/plugins/gw2emblem-defs.js',
-		// 				'public/plugins/gw2emblem.js',
-		// 			]
-		// 		}
-		// 	},
-		// 	app: {
-		// 		files: {
-		// 			'public/prod/app.min.js': [
-		// 				'public/js/lib.js',
+		cssmin: {
+			css: {
+				files: {
+					'public/stylesheets/style.min.css': [
+						'public/stylesheets/style.css',
+					]
+				}
+			},
+		},
 
-		// 				'public/js/anet.js',
-		// 				'public/js/app*.js',
-		// 			]
-		// 		}
-		// 	},
-		// }
+		uglify: {
+			options: {
+				stripBanners: false,
+				banner: '/*! grunt-uglify <%= pkg.name %> - v<%= pkg.version %> - ' + '<%= grunt.template.today("yyyy-mm-dd") %> */\n\n',
+				mangle: false,
+				preserveComments: 'some',
+			},
+			js: {
+				files: {
+					'public/javascripts/script.min.js': [
+						'public/javascripts/lib.js',
+						'public/javascripts/script.js',
+					]
+				}
+			},
+		}
 	});
 
-	grunt.registerTask('default', [
-		// 'cssmin',
-		// 'uglify',
-	]);
-	//grunt.registerTask('default', ['nodemon']);
 
+
+	grunt.registerTask('minify', ['cssmin', 'uglify']);
+	grunt.registerTask('dev', ['minify', 'concurrent:target']);
 };
