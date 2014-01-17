@@ -36,13 +36,14 @@
 	*/
 
 	$(function(){
-		$objectives = $('#objectives').find('.objectives');
+		$objectives = $('#objectives').find('.objective');
+		
 		if($objectives.length){
 	        setInterval(updateBuffTimers, 1000/3);
 
-			window.modules.ws.addListener('newOwner', newOwner);
-			window.modules.ws.addListener('newClaimer', newClaimer);
-			window.modules.ws.addListener('dropClaimer', dropClaimer);
+			window.modules.ws.addListener('newOwner', onNewOwner);
+			window.modules.ws.addListener('newClaimer', onNweClaimer);
+			window.modules.ws.addListener('dropClaimer', onDropClaimer);
 		}
 	});
 
@@ -62,7 +63,7 @@
 			$objectives,
 			function(objective, nextObjective){
 				var $objective = $(objective);
-				var lastCaptured = $objective.data('lastcaptured');
+				var lastCaptured = $objective.data('timestamp');
 				var timeHeld = now - lastCaptured;
 
 				if(timeHeld < buffTimer){
@@ -93,28 +94,48 @@
 	*
 	*/
 
+	function $getObjective(objectiveId){
+		return $('#objective-' + objectiveId);
+	}
 
-	function trackerUpdateOwner(objectiveId){
+
+	function setOwner(objectiveId){
 		var objective = window.gw2data.objectives[objectiveId];
 		var objectiveState = window.gw2data.state[objectiveId];
 
 		var teamColor = objectiveState.owner.color.toLowerCase();
 		var timestamp = objectiveState.owner.timestamp;
 
-		var $objective = $('#objective-' + objectiveId);
-		var $sprite = $objective.find('.sprite');
-
 		console.log('update objective owner', objective.commonNames[urlLang], objectiveState.owner.color);
 
-
-		$objective
+		$getObjective(objectiveId)
 			.removeClass('red green blue neutral')
 			.addClass(teamColor)
-			.data('lastcaptured', timestamp)
+			.data('timestamp', timestamp)
+			.data('guild', objectiveState.guild.id)
+			.find('.sprite')
+				.removeClass('red green blue neutral')
+				.addClass(teamColor)
+			.end()
+	}
 
-		$sprite
-			.removeClass('red green blue neutral')
-			.addClass(teamColor)
+
+
+	function setClaimer(objectiveId){
+		var objective = window.gw2data.objectives[objectiveId];
+		var objectiveState = window.gw2data.state[objectiveId];
+
+		$getObjective(objectiveId)
+			.data('guild', objectiveState.guild.id);
+	}
+
+
+
+	function removeClaimer(objectiveId){
+		var objective = window.gw2data.objectives[objectiveId];
+
+		$getObjective(objectiveId)
+			.data('guild', '');
 	}
 
 	
@@ -123,7 +144,7 @@
 	*   WS Events
 	*/
 
-	function newOwner(message){
+	function onNewOwner(message){
 		var eventArgs = message.arguments;
 		
 		window.gw2data.state[eventArgs.objectiveId].owner = {
@@ -131,10 +152,12 @@
 			"timestamp": eventArgs.timestamp,
 		};
 
-		trackerUpdateOwner(eventArgs.objectiveId);
+		setOwner(eventArgs.objectiveId);
 	}
 
-	function newClaimer(message){
+
+
+	function onNweClaimer(message){
 		var eventArgs = message.arguments;
 
 		window.gw2data.state[eventArgs.objectiveId].guild = {
@@ -142,16 +165,17 @@
 			"timestamp": eventArgs.timestamp,
 		};
 
-		//FIXME
+		setClaimer(eventArgs.objectiveId)
 	}
 
-	function dropClaimer(message){
+
+
+	function onDropClaimer(message){
 		var eventArgs = message.arguments;
 
 		window.gw2data.state[eventArgs.objectiveId].guild = {};
 
-
-		//FIXME
+		removeClaimer(eventArgs.objectiveId)
 	}
 
 

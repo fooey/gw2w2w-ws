@@ -90,7 +90,7 @@ mixin writeObjective (objectiveId)
 	-var state = objectiveState[objectiveId];
 	-var objectiveType = objectiveTypes[objective.type];
 	-var liClass = ['objective', 'team', state.owner.color.toLowerCase(), 'clearfix'];
-	li(id="objective-" + objectiveId, class=liClass, data-lastcaptured=state.owner.timestamp)
+	li(id="objective-" + objectiveId, class=liClass, data-timestamp=state.owner.timestamp, data-objectiveid=objectiveId, data-guild=state.guild.id)
 		span(class=['sprite', state.owner.color.toLowerCase(), objectiveType.type])
 		span.objective-name= objective.commonNames[urlLang]
 		if(state.guild.id)

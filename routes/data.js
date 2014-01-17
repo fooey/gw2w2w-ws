@@ -36,12 +36,16 @@ module.exports = function (req, res) {
 
 
 	function returnResults(err, data){
-		if(extension === 'json')
-			res.json(data)
-		else if(extension === 'js') 
-			res.send('window.gw2data.' + dataType + '=' + JSON.stringify(data) )
-		else
+		if(extension === 'json'){
+			res.json(data);
+		}
+		else if(extension === 'js') {
+			res.header("Content-Type", "application/javascript");
+			res.send('window.gw2data.' + dataType + '=' + JSON.stringify(data));
+		}
+		else{
 			res.status(404).send('Not found');
+		}
 	}
 
 };
