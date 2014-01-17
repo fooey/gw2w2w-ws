@@ -37,12 +37,12 @@
 
 	$(function(){
 		$objectives = $('#objectives').find('.objective');
-		
+
 		if($objectives.length){
 	        setInterval(updateBuffTimers, 1000/3);
 
 			window.modules.ws.addListener('newOwner', onNewOwner);
-			window.modules.ws.addListener('newClaimer', onNweClaimer);
+			window.modules.ws.addListener('newClaimer', onnewClaimer);
 			window.modules.ws.addListener('dropClaimer', onDropClaimer);
 		}
 	});
@@ -67,7 +67,7 @@
 				var timeHeld = now - lastCaptured;
 
 				if(timeHeld < buffTimer){
-					var formattedTime = window.modules.util.minuteFormat(buffTimer - timeHeld);
+					var formattedTime = window.modules.util.minuteFormat((buffTimer - timeHeld) - serverTimeOffset);
 					$objective.find('.timer')
 						.show()
 						.html(formattedTime)
@@ -157,7 +157,7 @@
 
 
 
-	function onNweClaimer(message){
+	function onnewClaimer(message){
 		var eventArgs = message.arguments;
 
 		window.gw2data.state[eventArgs.objectiveId].guild = {

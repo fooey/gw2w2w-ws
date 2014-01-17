@@ -154,7 +154,7 @@
 	        entries,
 	        function(logEntry, nextEntry){
 	            var $logEntry = $(logEntry);
-	            var intTimestamp = $logEntry.data('timestamp');
+	            var intTimestamp = $logEntry.data('timestamp') - serverTimeOffset;
 	            var dateObj = new Date(intTimestamp*1000);
 	            var strTimestamp = window.modules.util.dateFormat(dateObj, 'hh:MM:ss');
 	            var timetext = Humanize.naturalTime(intTimestamp)
