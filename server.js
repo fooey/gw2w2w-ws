@@ -32,7 +32,7 @@ GLOBAL.WebSocketServer.setServer(wss);
 GLOBAL.WebSocketServer.start();
 
 
-require('./lib/cache').deleteCacheFiles('tmp',
+require('./lib/cache').init(
 	require('./lib/dataUpdater').startUpdater()
 );
 
