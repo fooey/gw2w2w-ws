@@ -84,8 +84,9 @@ body{
 	padding-top: .5em;
 }
 .overview .world{
-	height: 30px;
-	line-height: 30px;
+	height: 33px;
+	font-size: 12pt;
+	line-height: 33px;
 }
 .overview .world:nth-child(2){
 	background-color: #f9f9f9;
@@ -93,18 +94,38 @@ body{
 .overview .world:hover{
 	background-color: #ffd;
 }
-.overview .score{text-align: right;}
-.overview .pie{width: 90px; height: 90px; margin: 0 auto;}
+.overview .score{
+	font-size: 10pt;
+	height: 30px;
+	line-height: 30px;
+	text-align: right;
+	font-family: 'Droid Sans Mono', sans-serif;
+	position: relative;
+}
+.overview .score .score-diff{
+	position: absolute;
+	left: -3em;
+	font-size: 10px;
+	line-height: 30px;
+	padding-right: .5em;
+	text-shadow: 0 0 4px rgba(0,0,0,.3);
+	width: 3em;
+	text-align: right;
+	display: inline-block;
+}
+.overview .pie{
+	width: 99px; height: 99px; margin: 0 auto;
+}
 .overview {}
 
 
 
 
 
-.team-score{
+.teamScoreBoard{
 	padding: 8px 0;
 }
-.team-score > *{
+.teamScoreBoard > *{
 	padding: 0;
 	margin: 0;
 	line-height: 120%;
@@ -151,7 +172,7 @@ body{
 	font-size: 7.5pt;
 	height: 15px;
 	line-height: 15px;
-	font-family: monospace;
+	font-family: 'Droid Sans Mono', sans-serif;
 
 	text-align: right;
 	padding: 0 2px;
@@ -175,32 +196,67 @@ body{
 	max-height: 400px;
 	overflow: auto;
 }
-#logEntries table{
-	width: 100%;
+
+#logEntries .logEntry{
+	border-bottom: 1px solid #eee;
 }
-#logEntries tr,
-#logEntries th,
-#logEntries td{
+#logEntries .logEntry.alt{
+	background-color: #f9f9f9;
+}
+#logEntries .logEntry:hover{
+	background-color: #ffffee;
+}
+#logEntries .logCol{
+	display: inline-block;
+	float: left;
 	margin: 0;
 	padding: 0;
 	white-space: nowrap;
-}
-#logEntries th,
-#logEntries td{
-	padding: 2px .5em;
-	font-size: 10pt;
-	line-height: 15px;
-	border-bottom: 1px solid #eee;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	padding: 0;
+	font-size: 12px;
+	line-height: 23px;
 }
 
-#logEntries tr.alt > *{
-	background-color: #f9f9f9;
+#logEntries .logCol.timestamp{
+	width: 60px;
 }
-#logEntries tr:hover > *{
-	background-color: #ffffee;
+#logEntries .logCol.timetext{
+	width: 90px;
+}
+#logEntries .logCol.logSprite{
+	width: 20px;
+}
+#logEntries .logCol.logSprite .sprite{
+	position: relative;
+	top: 4px;
+}
+#logEntries .logCol.objName{
+	width: 150px;
+}
+#logEntries .logCol.mapName{
+	width: 80px;
+}
+#logEntries .logCol.details{
+	width: 300px;
 }
 
 
+
+#logEntries .timestamp,
+#logEntries .timetext{
+	font-family: 'Droid Sans Mono', sans-serif;
+	font-size: 10px;
+}
+
+
+
+/*
+*
+*	OBJECTIVE SPRITES
+*
+*/
 
 /* default, neutral sprites */
 .sprite,
@@ -269,6 +325,11 @@ body{
 
 
 
+/*
+*
+*	LOADING ANIMATION
+*
+*/
 
 .loading-spinner {
 	width: 168px;

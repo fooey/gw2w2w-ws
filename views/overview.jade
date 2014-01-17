@@ -25,9 +25,9 @@ block content
 block bodyClose
 	script(src="//www.google.com/jsapi")
 	script.
+		window.webSocketChannel = 'overview';
+		window.serverTimeOffset = #{Math.floor(Date.now() / 1000)} - Math.floor(Date.now() / 1000);
 		google.load('visualization', '1', {packages: ['corechart']});
-		$(function(){subscribeToUpdates('overview')});
-		serverTimeOffset = #{Math.floor(Date.now() / 1000)} - Math.floor(Date.now() / 1000);
 
 
 
@@ -44,10 +44,10 @@ mixin writeMatches(matchList)
 				.worlds.col-md-9.col-xs-9
 					each world, worldIndex in [match.redWorld, match.blueWorld, match.greenWorld]
 						-var team = ['red', 'blue', 'green'][worldIndex];
-						.world.row(id="world"+ world.id, class=['team', team])
-							.name.col-md-9.col-xs-9
+						.world.row(id="world"+ world.id, class=['team', team], data-worldIndex=worldIndex)
+							.name.col-md-9.col-xs-8
 								a(href=world[urlLang].link, class=['team', team])= world[urlLang].name
-							.score.col-md-3.col-xs-3(data-score= match.scores[worldIndex])
+							.score.col-md-3.col-xs-4(data-score= match.scores[worldIndex])
 								= match.scoresFormatted[worldIndex]
 
 				.col-md-3.col-xs-3

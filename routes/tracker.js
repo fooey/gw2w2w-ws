@@ -74,6 +74,7 @@ module.exports = function (req, res) {
         
 
     function getWorld (getWorldCallback){
+        
         worldsController.getBySlug(urlLang, urlSlug, getWorldCallback);
     }
 

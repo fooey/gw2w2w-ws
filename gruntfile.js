@@ -2,6 +2,7 @@ module.exports = function(grunt) {
 
 	grunt.loadNpmTasks('grunt-concurrent');
 	grunt.loadNpmTasks('grunt-nodemon');
+	// grunt.loadNpmTasks('grunt-contrib-concat');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-cssmin');
@@ -37,8 +38,7 @@ module.exports = function(grunt) {
 
 		watch: {
 			css: {
-				//files: 'public/stylesheets/*.css',
-				files: 'public/stylesheets/style.css',
+				files: 'public/css/style.css',
 				tasks: ['cssmin'],
 				options: {
 					livereload: true, 
@@ -46,12 +46,11 @@ module.exports = function(grunt) {
 					debounceDelay: 500,
 				},
 			},
-			js: {
+			appJs: {
 				files: [
-					'public/javascripts/script.js',
-					'public/javascripts/lib.js'
+					'public/js/app*.js'
 				],
-				tasks: ['uglify'],
+				tasks: ['uglify:appJs'],
 				options: {
 					livereload: true,
 					interval: 500,
@@ -63,8 +62,8 @@ module.exports = function(grunt) {
 		cssmin: {
 			css: {
 				files: {
-					'public/stylesheets/style.min.css': [
-						'public/stylesheets/style.css',
+					'public/css/style.min.css': [
+						'public/css/style.css',
 					]
 				}
 			},
@@ -72,16 +71,31 @@ module.exports = function(grunt) {
 
 		uglify: {
 			options: {
+				report: 'min',
 				stripBanners: false,
 				banner: '/*! grunt-uglify <%= pkg.name %> - v<%= pkg.version %> - ' + '<%= grunt.template.today("yyyy-mm-dd") %> */\n\n',
-				mangle: false,
+				mangle: true,
 				preserveComments: 'some',
 			},
-			js: {
+			appJs: {
+				options:{
+					sourceMap: 'public/js/script.map.js',
+					sourceMapRoot: '/js/script.min.js',
+					sourceMappingURL: function(sourceMap){return '/js/script.map.js'},
+					sourceMapPrefix: 1,
+					sourceMapIncludeSources: 2,
+				},
 				files: {
-					'public/javascripts/script.min.js': [
-						'public/javascripts/lib.js',
-						'public/javascripts/script.js',
+					'public/js/script.min.js': [
+						// 'public/js/script.js',
+						'public/js/app.js',
+						'public/js/app.util.js',
+						'public/js/app.wsClient.js',
+						'public/js/app.overview.js',
+						'public/js/app.tracker.js',
+						'public/js/app.tracker.scoreboard.js',
+						'public/js/app.tracker.objectives.js',
+						'public/js/app.tracker.log.js',
 					]
 				}
 			},

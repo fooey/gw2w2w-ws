@@ -8,6 +8,7 @@ block content
 					img.loading-spinner(src="/images/gw2-dragon-256.png")
 				h1.text-center(style="margin: 3em 0") Loading, Please Wait...
 
+
 block bodyClose
 	script.
-		$(function(){subscribeToUpdates('loading')});
+		window.webSocketChannel = 'loading';

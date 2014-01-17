@@ -4,12 +4,12 @@ extends layout
 block content
 	#tracker
 		.container
-			section.row.totalScores
+			section#scoreBoards.row.totalScores
 				each world, worldIndex in [match.redWorld, match.blueWorld, match.greenWorld]
 					+writeWorldScore(world, worldIndex)
 
 		.container
-			section.row: div.col-md-12: div.row.row-gutterless.objectives
+			section#objectives.row: div.col-md-12: div.row.row-gutterless.objectives
 				-var mapNum = 0;
 				div.col-md-3
 					+witeObjectiveGroup('Center', mapNum++)
@@ -39,11 +39,19 @@ block worldLinks
 			a(class=aClass, href=world.link)
 				= world[urlLang].name
 
+block headClose
+	link(href='http://fonts.googleapis.com/css?family=Droid+Sans+Mono', rel='stylesheet', type='text/css')
+		
 
 block bodyClose
 	script.
-		$(function(){subscribeToUpdates('match#{match.id}');});
+		window.webSocketChannel = 'match#{match.id}';
 		serverTimeOffset = #{Math.floor(Date.now() / 1000)} - Math.floor(Date.now() / 1000);
+		urlLang = '#{urlLang}';
+		window.gw2data = {};
+	script(src="/data/objectives.js")
+	script(src="/data/objectiveTypes.js")
+	script(src="/data/objectiveGroups.js")
 	script(src="/data/state-" + match.id + ".js")
 
 
@@ -52,8 +60,8 @@ block bodyClose
 // scoreboard
 mixin writeWorldScore(world, worldIndex)
 	-var team = ['red', 'blue', 'green'][worldIndex];
-	-var scoreClass = ['team-score', 'well', 'team', team];
-	div.col-md-4: div(class=scoreClass)
+	-var scoreClass = ['teamScoreBoard', 'well', 'team', team];
+	div.col-md-4: div(class=scoreClass, data-worldIndex=worldIndex)
 		h2.text-center= world[urlLang].name
 		h3.score.text-center(data-score=matchDetails.scores[worldIndex])= matchDetails.scoresFormatted[worldIndex]
 
@@ -96,7 +104,7 @@ mixin writeObjective (objectiveId)
 mixin writeLog
 	section#log
 		+writeLogTabs()
-		#logEntries: table
+		section#logEntries
 			each entry, ixEntry in journal
 				+writeLogEntry(entry, ixEntry)
 
@@ -110,12 +118,14 @@ mixin writeLogTabs
 mixin writeLogEntry(entry, ixEntry)
 	-var color = ((entry.color) ? entry.color : objectiveState[entry.objective.id].owner.color).toLowerCase();
 	-var objectiveType = objectiveTypes[entry.objective.type];
-	tr(class=['logEntry', 'team', color, entry.mapName, (ixEntry % 2) ? 'alt' : ''], data-timestamp=entry.timestamp, data-mapname=entry.mapName, data-objectiveid=entry.objective.id)
-		td.timestamp
-		td.mapName= entry.mapName
-		td: span(class=['sprite', color.toLowerCase(), objectiveType.type])
-		td= entry.objective.commonNames[urlLang]
-		td(width="100%")
+	-var entryClass = ['logEntry', 'team', 'clearfix', color, entry.type, entry.mapName, 'objective-' + entry.objective.id];
+	div(class=entryClass, data-timestamp=entry.timestamp, data-mapname=entry.mapName, data-objectiveid=entry.objective.id)
+		div.logCol.timestamp
+		div.logCol.timetext
+		div.logCol.logSprite: span(class=['sprite', color.toLowerCase(), objectiveType.type])
+		div.logCol.objName= entry.objective.commonNames[urlLang]
+		div.logCol.mapName= entry.mapName
+		div.logCol.details
 			if(entry.type === 'owner')
 				= entry.color
 			if(entry.type === 'claimer')

@@ -10,6 +10,9 @@ module.exports = function (req, res) {
 		require('../lib/objectives').getObjectives(returnResults); 
 	}
 	else if(dataType === 'objectiveGroups'){
+		returnResults(null, require('../lib/objectiveGroups').getByObjective());
+	}
+	else if(dataType === 'objectiveGroupsLayout'){
 		returnResults(null, require('../lib/objectiveGroups').getByMap());
 	}
 	else if(dataType === 'objectiveTypes'){
@@ -36,7 +39,7 @@ module.exports = function (req, res) {
 		if(extension === 'json')
 			res.json(data)
 		else if(extension === 'js') 
-			res.send(dataType + '=' + JSON.stringify(data) )
+			res.send('window.gw2data.' + dataType + '=' + JSON.stringify(data) )
 		else
 			res.status(404).send('Not found');
 	}
