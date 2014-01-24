@@ -34,9 +34,9 @@
     *
     */
 	$(function(){
-	     $('<div id="priorityAlert" class="alert alert-danger" style="margin: 1em 0; padding: 1em; text-align: center; vertical-align: middle;"><h1>Application has requested a page reload</h1></div>')
-	     	.hide()
-	     	.prependTo('#content')
+	     // $('<div id="priorityAlert" class="alert alert-danger" style="margin: 1em 0; padding: 1em; text-align: center; vertical-align: middle;"><h1>Application has requested a page reload</h1></div>')
+	     // 	.hide()
+	     // 	.prependTo('#content')
 	});
 
 
@@ -47,7 +47,7 @@
     *
     */
 
-	util.reloadDelayed = function(msMin, msMax){
+	var reloadDelayed = util.reloadDelayed = function(msMin, msMax){
 	    if(msMin && !msMax){
 	        msMax = msMin;
 	    }
@@ -61,7 +61,7 @@
 
 
 
-	util.isJSON = function(data) {
+	var isJson = util.isJSON = function(data) {
 	    var isJson = false
 	    try {
 	        // this works with JSON string and JSON object, not sure about others
@@ -73,7 +73,7 @@
 
 
 
-	util.minuteFormat = function (seconds){
+	var minuteFormat = util.minuteFormat = function (seconds){
 	    var minutes = Math.floor(seconds / 60);
 	    seconds -= (minutes * 60);
 	    
@@ -101,7 +101,7 @@
 	 * The mask defaults to dateFormat.masks.default.
 	 */
 
-	util.dateFormat = function () {
+	var dateFormat = util.dateFormat = function () {
 		var	token = /d{1,4}|m{1,4}|yy(?:yy)?|([HhMsTt])\1?|[LloSZ]|"[^"]*"|'[^']*'/g,
 			timezone = /\b(?:[PMCEA][SDP]T|(?:Pacific|Mountain|Central|Eastern|Atlantic) (?:Standard|Daylight|Prevailing) Time|(?:GMT|UTC)(?:[-+]\d{4})?)\b/g,
 			timezoneClip = /[^-+\dA-Z]/g,
@@ -195,15 +195,15 @@
 	        console.log('Reloading in %d ms', ms);
 
 	       
-	        $('#priorityAlert').slideDown('fast');
+	        // $('#priorityAlert').slideDown('fast');
 
 	        setTimeout(function(){
 
-	            $('#priorityAlert')
-	                .find('h3')
-	                    .fadeOut('fast', function(){
-	                        $(this).remove();
-	                    });
+	            // $('#priorityAlert')
+	            //     .find('h3')
+	            //         .fadeOut('fast', function(){
+	            //             $(this).remove();
+	            //         });
 
 	            $.ajax({
 	                url: window.location,
@@ -216,13 +216,13 @@
 	                console.log(' App not ready, requeuing reload ');
 	                console.log('*********************************');
 
-	                $('#priorityAlert')
-	                    .css({minHeight: '160px'})
-	                    .append(
-	                         $('<h3>Application unavailable, requeuing page reload...</h3>')
-	                            .hide()
-	                            .fadeIn('fast')
-	                    );
+	                // $('#priorityAlert')
+	                //     .css({minHeight: '160px'})
+	                //     .append(
+	                //          $('<h3>Application unavailable, requeuing page reload...</h3>')
+	                //             .hide()
+	                //             .fadeIn('fast')
+	                //     );
 
 	                __INSTANCE.waitingForReload = false;
 	                util.reloadDelayed(4000, 8000);
