@@ -93,10 +93,10 @@ mixin writeObjective (objectiveId)
 	li(id="objective-" + objectiveId, class=liClass, data-timestamp=state.owner.timestamp, data-objectiveid=objectiveId, data-guild=state.guild.id)
 		span(class=['sprite', state.owner.color.toLowerCase(), objectiveType.type])
 		span.objective-name= objective.commonNames[urlLang]
-		if(state.guild.id)
-			span(class='guild-' + state.guild.id)
 		if(objectiveType.timer)
 			span.timer
+		if(state.guild.id)
+			abbr.guild *
 
 
 
