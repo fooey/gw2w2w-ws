@@ -1,7 +1,11 @@
+
+
 module.exports = function (req, res) {
-	const dataType = req.params.dataType;
+	"use strict";
+	let dataType = req.params.dataType;
+
 	const extension = req.params.extension;
-	const matchId = req.params.matchId;
+	const id = req.params.id;
 
 	if(dataType === 'worlds'){
 		require('../lib/worlds').getWorlds(returnResults); 
@@ -25,10 +29,14 @@ module.exports = function (req, res) {
 		require('../lib/matchDetails').getScores(returnResults); 
 	}
 	else if(dataType === 'matchDetails'){
-		data = require('../lib/matchDetails').getById(matchId, returnResults); 
+		require('../lib/matchDetails').getById(id, returnResults); 
 	}
 	else if(dataType === 'state'){
-		data = require('../lib/objectiveState').getById(matchId, returnResults); 
+		require('../lib/objectiveState').getById(id, returnResults); 
+	}
+	else if(dataType === 'guild'){
+		dataType += ( '-' + id );
+		require('../lib/guilds').getById(id, returnResults);
 	}
 	else{
 		res.status(404).send('Not found');
