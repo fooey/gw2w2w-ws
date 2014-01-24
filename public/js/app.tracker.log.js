@@ -175,16 +175,25 @@
     */
 
 	function init(){
-		$log.on('mouseenter mouseleave', '.logEntry', onEntryOver);
+		$log.on('mouseenter', '.logEntry', onEntryEnter)
+			.on('mouseleave', '.logEntry', onEntryLeave);
 		$logtabs.on('click', 'a', onTabClick);
 	}
 	
 
-	function onEntryOver(e){
+	function onEntryEnter(e){
 		var $that = $(this);
 		var objectiveId = $that.data('objectiveid');
-		var $objective = $('#objective-' + objectiveId);
-		$objective.toggleClass('active');
+		var $objective = window.modules.trackerObjectives.$getObjective(objectiveId);
+		$objective.addClass('active');
+	}
+	
+
+	function onEntryLeave(e){
+		var $that = $(this);
+		var objectiveId = $that.data('objectiveid');
+		var $objective = window.modules.trackerObjectives.$getObjective(objectiveId);
+		$objective.removeClass('active');
 	}
 	
 
