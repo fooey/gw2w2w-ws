@@ -105,7 +105,7 @@
         }
 
 
-        async.each(
+        async.eachSeries(
             packets,
             function(packet, nextPacket){
                 packet.event = packet.event || 'global';
