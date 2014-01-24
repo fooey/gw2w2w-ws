@@ -181,6 +181,17 @@ body{
 	border: 1px solid #faebcc;
 	border-radius: 4px;
 }
+.objectives-group .objective .guild{
+	float: right;
+	display: inline-block;
+	height: 15px;
+	font-size: 8pt;
+	position: relative;
+}
+
+.timer + .guild{
+	margin-right: 4px;
+}
 
 
 

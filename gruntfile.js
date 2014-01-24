@@ -95,6 +95,7 @@ module.exports = function(grunt) {
 						'public/js/app.tracker.js',
 						'public/js/app.tracker.scoreboard.js',
 						'public/js/app.tracker.objectives.js',
+						'public/js/app.tracker.guilds.js',
 						'public/js/app.tracker.log.js',
 					]
 				}
