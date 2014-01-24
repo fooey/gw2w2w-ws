@@ -42,7 +42,7 @@
 	        setInterval(updateBuffTimers, 1000/3);
 
 			window.modules.ws.addListener('newOwner', onNewOwner);
-			window.modules.ws.addListener('newClaimer', onnewClaimer);
+			window.modules.ws.addListener('newClaimer', onNewClaimer);
 			window.modules.ws.addListener('dropClaimer', onDropClaimer);
 		}
 	});
@@ -52,6 +52,19 @@
 	/*
 	*
 	*   PUBLIC METHODS
+	*
+	*/
+
+	var $getObjective = trackerObjectives.$getObjective = _.memoize(function(objectiveId){
+		return $objectives.filter('#objective-' + objectiveId);
+	});
+
+
+	
+
+	/*
+	*
+	*   PRIVATE METHODS
 	*
 	*/
 
@@ -86,18 +99,6 @@
 	};
 
 
-	
-
-	/*
-	*
-	*   PRIVATE METHODS
-	*
-	*/
-
-	function $getObjective(objectiveId){
-		return $('#objective-' + objectiveId);
-	}
-
 
 	function setOwner(objectiveId){
 		var objective = window.gw2data.objectives[objectiveId];
@@ -106,13 +107,12 @@
 		var teamColor = objectiveState.owner.color.toLowerCase();
 		var timestamp = objectiveState.owner.timestamp;
 
-		console.log('update objective owner', objective.commonNames[urlLang], objectiveState.owner.color);
+		console.log('UPDATE :: New objective owner', objective.commonNames[urlLang], objectiveState.owner, objectiveState.guild);
 
 		$getObjective(objectiveId)
 			.removeClass('red green blue neutral')
 			.addClass(teamColor)
 			.data('timestamp', timestamp)
-			.data('guild', objectiveState.guild.id)
 			.find('.sprite')
 				.removeClass('red green blue neutral')
 				.addClass(teamColor)
@@ -125,17 +125,37 @@
 		var objective = window.gw2data.objectives[objectiveId];
 		var objectiveState = window.gw2data.state[objectiveId];
 
-		$getObjective(objectiveId)
-			.data('guild', objectiveState.guild.id);
+
+		if(objectiveState.guild.id){
+			console.log('UPDATE :: New objective claimer', objective.commonNames[urlLang], objectiveState.owner, objectiveState.guild);
+
+			$getObjective(objectiveId)
+				.data('guild', objectiveState.guild.id)
+				.append($('<abbr class="guild"></abbr>'));
+
+			window.modules.guilds.setGuild(objectiveId);
+		}
 	}
 
 
 
 	function removeClaimer(objectiveId){
 		var objective = window.gw2data.objectives[objectiveId];
+		var objectiveState = window.gw2data.state[objectiveId];
+		var $objective = $getObjective(objectiveId);
 
-		$getObjective(objectiveId)
-			.data('guild', '');
+		var hasGuild = !!(($objective.find('.guild').length) || $objective.data('guild'));
+		var isSameGuild = hasGuild && ($objective.data('guild') === objectiveState.guild.id)
+
+		if(hasGuild && !isSameGuild){
+			console.log('UPDATE :: Remove objective claimer', objective.commonNames[urlLang], objectiveState.owner, objectiveState.guild);
+
+			$objective
+				.find('.guild')
+					.remove()
+				.end()
+				.data('guild', null);
+		}
 	}
 
 	
@@ -152,12 +172,25 @@
 			"timestamp": eventArgs.timestamp,
 		};
 
-		setOwner(eventArgs.objectiveId);
+		async.series([
+			function(next){
+				setOwner(eventArgs.objectiveId);
+				next(null);
+			},
+			function(next){
+				removeClaimer(eventArgs.objectiveId);
+				next(null);
+			},
+			function(next){
+				setClaimer(eventArgs.objectiveId);
+				next(null);
+			},
+		]);
 	}
 
 
 
-	function onnewClaimer(message){
+	function onNewClaimer(message){
 		var eventArgs = message.arguments;
 
 		window.gw2data.state[eventArgs.objectiveId].guild = {
