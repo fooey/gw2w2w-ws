@@ -21,11 +21,10 @@
     "request": "~2.31.0",
     "slug": "~0.4.0",
     "uuid": "~1.4.1",
-    "ws": "~0.4.31",
-    "grunt": "~0.4.2"
-    
+    "ws": "~0.4.31"
   },
   "devDependencies": {
+    "grunt": "~0.4.2",
     "grunt-nodemon": "~0.1.2",
     "grunt-contrib-watch": "~0.5.3",
     "grunt-concurrent": "~0.4.3",
