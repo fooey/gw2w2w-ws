@@ -35,8 +35,12 @@ module.exports = function (req, res) {
 		require('../lib/objectiveState').getById(id, returnResults); 
 	}
 	else if(dataType === 'guild'){
-		dataType += ( '-' + id );
+		dataType += ( 's.' + id );
 		require('../lib/guilds').getById(id, returnResults);
+	}
+	else if(dataType === 'guilds'){
+		//dataType += ( '.' + id );
+		require('../lib/guilds').getByMatchId(id, returnResults);
 	}
 	else{
 		res.status(404).send('Not found');

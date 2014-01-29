@@ -36,11 +36,7 @@
     */
 
 	$(function(){
-		$('#objectives').find('.objective').has('.guild').each(function(){
-			var $that = $(this);
-			setGuild($that.data('objectiveid'))
-		});
-			// window.modules.guilds.setGuild(objectiveId);
+		_.defer(setPendingGuilds)
 	});
 
 
@@ -51,26 +47,60 @@
     *
     */
 
-    var setGuild = guilds.setGuild = function(objectiveId){
-    	var $objective = window.modules.trackerObjectives.$getObjective(objectiveId);
-		var objective = window.gw2data.objectives[objectiveId];
-		var objectiveState = window.gw2data.state[objectiveId];
 
-    	var $guild = $objective.find('.guild');
-    	var guildId = $objective.data('guild');
 
-    	console.log(guildId)
+    var setPendingGuilds = guilds.setPendingGuilds = function($guild){
+    	var guildsToSet = $('.guild:not(.guildSet)');
 
-    	//http://localhost:3000/data/guild-2D271EFA-F7F9-44A1-AAEB-5ED0024E9539.json
-    	$.getJSON("/data/guild-" + guildId + ".json")
-    		.done(function(data, textStatus, jqXHR) {
-    			console.log(data);
-    			$guild.text(data.tag).attr("title", data.guild_name);
-    		})
-    		// .fail(function( jqXHR, textStatus, errorThrown ) {})
-    		// .always(function( data|jqXHR, textStatus, jqXHR|errorThrown ) { })
+    	async.eachSeries(
+    		guildsToSet,
+    		function(guild, nextGuild){
+    			setGuild($(guild));
+    			nextGuild(null);
+    		}, _.noop
+    	);
+    }
 
-    	$guild.text();
+
+    var setGuild = guilds.setGuild = function($guild){
+    	// console.log('$guild', $guild)
+
+    	var guildId = $guild.data('guild');
+
+    	if(!guildId){
+    		console.log($guild, guildId)
+    	}
+    	else{
+	    	var guildData = window.gw2data.guilds[guildId];
+
+	    	if(guildData){
+	    		$guild.addClass('guildSet');
+
+	    		if($guild.hasClass('guildFull')){
+	    			$guild.text('[' + guildData.tag + '] ' + guildData.guild_name);
+	    		}
+	    		else{
+	    			$guild.text(guildData.tag)
+		    			.attr("title", guildData.guild_name);
+	    		}
+	    	}
+	    	else{
+	    		$guild.text('loading...');
+
+		    	$.getJSON("/data/guild-" + guildId + ".json")
+		    		.done(function(data, textStatus, jqXHR) {
+		    			window.gw2data.guilds[guildId] = data;
+		    			console.log('New Guild Data: ', $guild, data);
+		    			setGuild($guild);
+		    		})
+		    		.fail(function( jqXHR, textStatus, errorThrown ) {
+		    			console.log('Guild Data Failed: ', $guild, errorThrown);
+		    			//setTimeout(function(){setGuild($guild);}, 1000)
+		    		})
+		    		// .always(function( data|jqXHR, textStatus, jqXHR|errorThrown ) { });
+	    	}
+	    }
+
     }
 
     

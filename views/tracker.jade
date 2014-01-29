@@ -53,6 +53,7 @@ block bodyClose
 	script(src="/data/objectiveTypes.js")
 	script(src="/data/objectiveGroups.js")
 	script(src="/data/state-" + match.id + ".js")
+	script(src="/data/guilds-" + match.id + ".js")
 
 
 
@@ -90,13 +91,13 @@ mixin writeObjective (objectiveId)
 	-var state = objectiveState[objectiveId];
 	-var objectiveType = objectiveTypes[objective.type];
 	-var liClass = ['objective', 'team', state.owner.color.toLowerCase(), 'clearfix'];
-	li(id="objective-" + objectiveId, class=liClass, data-timestamp=state.owner.timestamp, data-objectiveid=objectiveId, data-guild=state.guild.id)
+	li(id="objective-" + objectiveId, class=liClass, data-timestamp=state.owner.timestamp, data-objectiveid=objectiveId)
 		span(class=['sprite', state.owner.color.toLowerCase(), objectiveType.type])
 		span.objective-name= objective.commonNames[urlLang]
 		if(objectiveType.timer)
 			span.timer
 		if(state.guild.id)
-			abbr.guild *
+			abbr.guild(data-guild=state.guild.id)
 
 
 
@@ -120,14 +121,17 @@ mixin writeLogEntry(entry, ixEntry)
 	-var objectiveType = objectiveTypes[entry.objective.type];
 	-var entryClass = ['logEntry', 'team', 'clearfix', color, entry.type, entry.mapName, 'objective-' + entry.objective.id];
 	div(class=entryClass, data-timestamp=entry.timestamp, data-mapname=entry.mapName, data-objectiveid=entry.objective.id)
-		div.logCol.timestamp
+		//- div.logCol.timestamp
 		div.logCol.timetext
 		div.logCol.logSprite: span(class=['sprite', color.toLowerCase(), objectiveType.type])
 		div.logCol.objName= entry.objective.commonNames[urlLang]
 		div.logCol.mapName= entry.mapName
-		div.logCol.details
-			if(entry.type === 'owner')
+		if(entry.type === 'owner')
+			div.logCol.details
+				| newOwner: 
 				= entry.color
-			if(entry.type === 'claimer')
-				= entry.guildId
+		if(entry.type === 'claimer')
+			div.logCol.details
+				| newClaimer: 
+				span.guild.guildFull(data-guild=entry.guildId)= entry.guildId
 

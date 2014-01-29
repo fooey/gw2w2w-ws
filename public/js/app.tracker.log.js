@@ -69,7 +69,7 @@
     *
     */
 
-	function append(objectiveId, eventType, detailText){
+	function append(objectiveId, eventType, $logDetail){
 		var objective = window.gw2data.objectives[objectiveId];
 		var objectiveType = window.gw2data.objectiveTypes[objective.type];
 
@@ -101,12 +101,12 @@
 					'mapname': '',
 				},
 			})
-			.append($('<div>', {"class": "logCol timestamp"}))
+			// .append($('<div>', {"class": "logCol timestamp"}))
 			.append($('<div>', {"class": "logCol timetext"}))
 			.append($('<div>', {"class": "logCol logSprite"}).append($icon))
 			.append($('<div>', {"class": "logCol objName", "text": objective.commonNames[urlLang]}))
 			.append($('<div>', {"class": "logCol mapName", text: objectiveGroup.mapName}))
-			.append($('<div>', {"class": "logCol details", "text": detailText}))
+			.append($('<div>', {"class": "logCol details"}).append($logDetail))
 			.hide();
 
 
@@ -159,8 +159,8 @@
 	            var strTimestamp = window.modules.util.dateFormat(dateObj, 'hh:MM:ss');
 	            var timetext = Humanize.naturalTime(intTimestamp)
 
-	            $logEntry.find('.timestamp').html(strTimestamp);
-	            $logEntry.find('.timetext').html(timetext);
+	            // $logEntry.find('.timestamp').html(strTimestamp).attr('title', timetext);
+	            $logEntry.find('.timetext').html(timetext).attr('title', strTimestamp);
 
 	            nextEntry(null);
 	        },
@@ -236,21 +236,40 @@
         var eventArgs = message.arguments;
 
 		removeEntries('.objective-' + eventArgs.objectiveId);
-        append(eventArgs.objectiveId, message.event, 'newOwner: ' + eventArgs.owner);
+
+		var $logDetail = $('<span>', {"text": 'newOwner: ' + eventArgs.owner});
+        append(eventArgs.objectiveId, message.event, $logDetail);
     }
 
 	function newClaimer(message){
 		var eventArgs = message.arguments;
 
 		removeEntries('.claimer.objective-' + eventArgs.objectiveId);
-		append(eventArgs.objectiveId, message.event, 'newClaimer: ' + eventArgs.guild);
+
+		var $guild = $('<span>', {
+			"class": "guild guildFull",
+			"data": {
+				"guild": eventArgs.guild
+			},
+			"text": eventArgs.guild
+		});
+
+		var $logDetail = $('<span>', {
+			"text": 'newClaimer: '
+		}).append($guild);
+
+		// console.log('newClaimer $guild', $guild, $guild.data('guild'));
+
+		append(eventArgs.objectiveId, message.event, $logDetail);
 	}
 
 	function dropClaimer(message){
 		var eventArgs = message.arguments;
 
 		removeEntries('.claimer.objective-' + eventArgs.objectiveId);
-		append(eventArgs.objectiveId, message.event, 'removeClaimer: ' + eventArgs.objectiveId);
+
+		var $logDetail = $('<span>', {"text": 'removeClaimer: ' + eventArgs.objectiveId});
+		append(eventArgs.objectiveId, message.event, $logDetail);
 	}
 
 

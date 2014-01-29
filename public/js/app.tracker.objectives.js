@@ -129,11 +129,18 @@
 		if(objectiveState.guild.id){
 			console.log('UPDATE :: New objective claimer', objective.commonNames[urlLang], objectiveState.owner, objectiveState.guild);
 
-			$getObjective(objectiveId)
-				.data('guild', objectiveState.guild.id)
-				.append($('<abbr class="guild"></abbr>'));
+			var $guild = $('<abbr>', {
+				"class": "guild",
+				"data": {
+					"guild": objectiveState.guild.id
+				},
+				"text": "Loading...",
+			})
 
-			window.modules.guilds.setGuild(objectiveId);
+			$getObjective(objectiveId)
+				.append($guild);
+
+			window.modules.guilds.setGuild($guild);
 		}
 	}
 

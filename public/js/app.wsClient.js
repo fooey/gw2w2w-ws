@@ -94,7 +94,7 @@
     function onClientMessage (event) {
         var packets = event.data;
 
-        console.log('Recieved WS Message: ', packets);
+        // console.log('Recieved WS Message: ', packets);
 
         if (window.modules.util.isJSON(packets)) {
             packets = JSON.parse(packets);
@@ -110,10 +110,13 @@
             function(packet, nextPacket){
                 packet.event = packet.event || 'global';
 
-                notifyListeners(packet);
-                nextPacket(null)
+                notifyListeners(packet, nextPacket);
             },
-            _.noop
+            function(err){
+                _.defer(
+                    window.modules.guilds.setPendingGuilds
+                );
+            }
         );
 
     }
@@ -130,17 +133,21 @@
     
 
 
-    function notifyListeners(packet) {
+    function notifyListeners(packet, callback) {
         var listeners = getListeners(packet.event);
-        if(!listeners || !listeners.length) return;
 
-        async.each(
-            listeners,
-            function(listener, nextListener){
-                listener(packet);
-                nextListener(null);
-            }, _.noop
-        );
+        if(!listeners || !listeners.length) {
+            callback(null)
+        }
+        else{
+            async.each(
+                listeners,
+                function(listener, nextListener){
+                    listener(packet);
+                    nextListener(null);
+                },callback
+            );
+        }
     };
 
 

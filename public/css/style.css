@@ -153,6 +153,7 @@ body{
 	height: 15px;
 	padding-left: 2px;
 	margin: 3px 0;
+	white-space: nowrap;
 }
 .objectives-group .objective.active {
 	background-color: #ff0;
@@ -165,11 +166,16 @@ body{
 .objectives-group .objective .sprite{
 	margin-right: 4px;
 }
+.objectives-group .objective .objective-name{
+	max-width: 66%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
 .objectives-group .objective .timer{
 	float: right;
 	display: inline-block;
-	width: 40px;
-	font-size: 7.5pt;
+	width: 30px;
+	font-size: 9px;
 	height: 15px;
 	line-height: 15px;
 	font-family: 'Droid Sans Mono', sans-serif;
@@ -185,7 +191,7 @@ body{
 	float: right;
 	display: inline-block;
 	height: 15px;
-	font-size: 8pt;
+	font-size: 10px;
 	position: relative;
 }
 
