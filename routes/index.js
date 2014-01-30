@@ -9,6 +9,8 @@ module.exports = function(app, express){
 
     app.get('/data/:dataType([A-Za-z]+)-:id([A-Za-z0-9\-]+).:extension', require('./data.js'));
     app.get('/data/:dataType([A-Za-z]+).:extension', require('./data.js'));
+
+    app.get('/emblems/:size/:guildId([A-Z0-9-]+)\.svg', require('./emblem.js'));
     
 
     app.get('/reset', function(req, res){

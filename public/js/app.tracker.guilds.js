@@ -26,6 +26,7 @@
     */
 
     var __INSTANCE = {};
+    var $guilds;
 
 
 
@@ -36,6 +37,7 @@
     */
 
 	$(function(){
+        $guilds = $('#guilds');
 		_.defer(setPendingGuilds)
 	});
 
@@ -73,8 +75,37 @@
     	else{
 	    	var guildData = window.gw2data.guilds[guildId];
 
+
 	    	if(guildData){
-	    		$guild.addClass('guildSet');
+	    		$guild.addClass('guildSet')
+                    .attr('href', '#' + guildId);
+
+
+                var $guildInfo = $guilds.find('#' + guildId);
+                if(!$guildInfo.length){
+                    $guilds.find('ul').prepend(
+                        $('<li>', {
+                            "id": guildId
+                        }).append(
+                            $('<p>', {text: '[' + guildData.tag + '] ' + guildData.guild_name})
+                        ).append(
+                            $('<img>', {
+                                src: '/emblems/256/' + guildId + '.svg',
+                                css: {
+                                    width: 128,
+                                    height: 128,
+                                }
+                            })
+                        ).hide()
+                    );
+                }
+                else{
+                    $guildInfo
+                        .hide()
+                        .detach()
+                        .prependTo($guilds.find('ul'))
+                        .slideDown()
+                }
 
 	    		if($guild.hasClass('guildFull')){
 	    			$guild.text('[' + guildData.tag + '] ' + guildData.guild_name);

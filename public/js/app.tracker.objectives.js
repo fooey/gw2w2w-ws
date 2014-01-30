@@ -129,7 +129,7 @@
 		if(objectiveState.guild.id){
 			console.log('UPDATE :: New objective claimer', objective.commonNames[urlLang], objectiveState.owner, objectiveState.guild);
 
-			var $guild = $('<abbr>', {
+			var $guild = $('<a>', {
 				"class": "guild",
 				"data": {
 					"guild": objectiveState.guild.id

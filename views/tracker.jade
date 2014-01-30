@@ -23,6 +23,9 @@ block content
 							+witeObjectiveGroup('GreenHome', mapNum++)
 					div.row.row-gutterless: div.col-md-12
 						+writeLog()
+					div.row.row-gutterless: div.col-md-12
+						div#guilds
+							ul.list-unstyled
 
 
 
@@ -97,7 +100,7 @@ mixin writeObjective (objectiveId)
 		if(objectiveType.timer)
 			span.timer
 		if(state.guild.id)
-			abbr.guild(data-guild=state.guild.id)
+			a.guild(data-guild=state.guild.id)
 
 
 
@@ -133,5 +136,5 @@ mixin writeLogEntry(entry, ixEntry)
 		if(entry.type === 'claimer')
 			div.logCol.details
 				| newClaimer: 
-				span.guild.guildFull(data-guild=entry.guildId)= entry.guildId
+				a.guild.guildFull(data-guild=entry.guildId, href="#" + entry.guildId)= entry.guildId
 

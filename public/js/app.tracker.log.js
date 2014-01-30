@@ -246,7 +246,7 @@
 
 		removeEntries('.claimer.objective-' + eventArgs.objectiveId);
 
-		var $guild = $('<span>', {
+		var $guild = $('<a>', {
 			"class": "guild guildFull",
 			"data": {
 				"guild": eventArgs.guild
